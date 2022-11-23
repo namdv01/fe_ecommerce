@@ -6,18 +6,18 @@ import Navbar from '../components/Headers/Navbar';
 // import authMiddleware from '../store/middleware/auth';
 
 function Home() {
-  // const authReducer = useSelector((state) => state.authReducer);
-  // const dispatch = useDispatch();
-  // const login = () => {
-  //   dispatch(authMiddleware.login());
-  // };
+	// const authReducer = useSelector((state) => state.authReducer);
+	// const dispatch = useDispatch();
+	// const login = () => {
+	//   dispatch(authMiddleware.login());
+	// };
 
-  return (
-    <>
-      <Navbar />
-      <Outlet />
-    </>
-  );
+	return (
+		<>
+			<Navbar />
+			<Outlet />
+		</>
+	);
 }
 
 export default Home;

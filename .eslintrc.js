@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 module.exports = {
   env: {
     browser: true,
@@ -18,5 +19,10 @@ module.exports = {
   ],
   rules: {
     'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    indent: [2, 'tab', { SwitchCase: 1, VariableDeclarator: 1 }],
+    'no-tabs': 0,
+    'react/jsx-indent': [2, 'tab'],
+    'react/jsx-indent-props': [2, 'tab'],
   },
 };
