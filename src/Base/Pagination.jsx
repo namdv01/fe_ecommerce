@@ -3,8 +3,8 @@ import ReactPaginate from 'react-paginate';
 
 // numberPage,totalPage,changeNumberPage
 function Pagination({ ...props }) {
-	const changePage = () => {
-		console.log(props.numberPage);
+	const changePage = (event) => {
+		props.changePage(event.selected);
 	};
 
 	return (

@@ -12,15 +12,23 @@ import Buyer from './pages/Buyer';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Seller from './pages/Seller';
+import { LOADING_FALSE, LOADING_TRUE } from './services/constants';
 import authMiddleware from './store/middleware/auth';
 
 function App() {
 	const authReducer = useSelector((state) => state.authReducer);
+	// const loading = useSelector((state) => state.systemReducer.loading);
 	const dispatch = useDispatch();
 	useEffect(() => {
 		const refresh = async () => {
 			if (!authReducer.isAuth) {
+				dispatch({
+					type: LOADING_TRUE,
+				});
 				await dispatch(authMiddleware.getProfile());
+				dispatch({
+					type: LOADING_FALSE,
+				});
 			}
 		};
 		refresh();

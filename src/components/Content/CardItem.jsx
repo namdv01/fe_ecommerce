@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import notImage from '../../assets/image/notImage.png';
 
 function CardItem({ ...props }) {
 	const navigate = useNavigate();
-	const navigateDetail = (e, idItem) => {
-		navigate(`/item/${idItem}`);
+	const navigateDetail = (e, item) => {
+		navigate(`/item/${item.id}`);
 	};
 	useEffect(() => {
 		// console.log(123);
@@ -14,19 +15,21 @@ function CardItem({ ...props }) {
 		<div
 			className="border w-[200px] hover:cursor-pointer"
 			onClick={(e) => {
-				navigateDetail(e, props.idItem);
+				navigateDetail(e, props.item);
 			}}
 			aria-hidden="true"
 		>
 			<img
-				src="https://cf.shopee.vn/file/649b01ca3d71b6462bead41ec3ce91f4_tn"
+				src={
+					props.item.itemImageData.length !== 0
+						? props.item.itemImageData[0].image
+						: notImage
+				}
 				alt=""
 				className="w-full p-[1px] h-[200px]"
 			/>
 			<p className="truncate leading-[18px] h-[45px]">
-				Áo polo nam nữ có khóa kéo chất vải thun,có cổ phong cách thời trang Hàn
-				Quốc,Áo polo nam nữ có khóa kéo chất vải thun,có cổ phong cách thời
-				trang Hàn Quốc
+				{props.item.description}
 			</p>
 			<div className="flex flex-row text-[16px]">
 				<span className="flex flex-row justify-center">
@@ -36,7 +39,7 @@ function CardItem({ ...props }) {
 				<span>|</span>
 				<span>Đã bán 76</span>
 			</div>
-			<p>135.000 đ</p>
+			<p>{props.item.price}</p>
 		</div>
 	);
 }
