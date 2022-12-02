@@ -10,12 +10,13 @@ const initState = {
 const systemReducer = (state = initState, action) => {
 	switch (action.type) {
 		case LOADING_TRUE:
-			console.log(123);
+			console.log('bắt đầu load');
 			return {
 				...state,
 				loading: true,
 			};
 		case LOADING_FALSE:
+			console.log('kết thúc load');
 			return {
 				...state,
 				loading: false,
