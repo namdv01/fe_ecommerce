@@ -17,20 +17,20 @@ import authMiddleware from './store/middleware/auth';
 
 function App() {
 	const authReducer = useSelector((state) => state.authReducer);
-	// const loading = useSelector((state) => state.systemReducer.loading);
 	const dispatch = useDispatch();
+	// eslint-disable-next-line no-unused-vars
+	const refresh = async () => {
+		if (!authReducer.isAuth) {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			await dispatch(authMiddleware.getProfile());
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		}
+	};
 	useEffect(() => {
-		const refresh = async () => {
-			if (!authReducer.isAuth) {
-				dispatch({
-					type: LOADING_TRUE,
-				});
-				await dispatch(authMiddleware.getProfile());
-				dispatch({
-					type: LOADING_FALSE,
-				});
-			}
-		};
 		refresh();
 	}, []);
 

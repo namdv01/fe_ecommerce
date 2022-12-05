@@ -10,8 +10,8 @@ import { LOADING_FALSE, LOADING_TRUE } from '../services/constants';
 function Landing() {
 	const [items, setItems] = useState([]);
 	const [page, setPage] = useState({
-		total: 0,
-		current: 0,
+		total: null,
+		current: null,
 	});
 	const dispatch = useDispatch();
 	const loading = useSelector((state) => state.systemReducer.loading);
@@ -37,11 +37,12 @@ function Landing() {
 			...page,
 			current: numberPage,
 		});
-		callApi();
 	};
 	useEffect(() => {
 		callApi();
 	}, []);
+
+	useEffect(() => {});
 	return (
 		<>
 			<SlideShow />
@@ -53,7 +54,7 @@ function Landing() {
 				))}
 			</div>
 			<Pagination
-				totalPage={page.total + 1}
+				totalPage={page.total}
 				numberPage={page.current}
 				changePage={changePage}
 			/>
