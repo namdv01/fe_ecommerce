@@ -96,6 +96,32 @@ const buyer = {
 			},
 		},
 	},
+	changePassword: {
+		type: 'object',
+		properties: {
+			password: {
+				type: 'string',
+				pattern:
+				'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$',
+				errorMessage:
+				'Mật khẩu tối thiểu 8 ký tự, 1 hoa, 1 thường, 1 ký tự đặc biệt',
+			},
+			newPassword: {
+				type: 'string',
+				pattern:
+				'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$',
+				errorMessage:
+				'Mật khẩu mới tối thiểu 8 ký tự, 1 hoa, 1 thường, 1 ký tự đặc biệt',
+			},
+			confirmNewPassword: {
+				const: {
+					$data: '1/newPassword',
+				},
+				errorMessage:
+				'Xác nhận mật khẩu không khớp',
+			},
+		},
+	},
 };
 
 export default buyer;

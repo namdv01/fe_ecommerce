@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+// import { uuid4 } from 'uuidv4';
 import Loading from '../Base/Loading';
 import Toast from '../Base/Toast';
 import checkError from '../services/checkError';
+import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../services/constants';
 import buyer from '../services/schemas/buyer';
 import authMiddleware from '../store/middleware/auth';
 
@@ -12,15 +14,8 @@ function Login() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const authReducer = useSelector((state) => state.authReducer);
-	const [showToast, setShowToast] = useState({
-		isShow: false,
-		content: '',
-		time: 3000,
-		type: 'default',
-	});
-	const setShow = (value) => {
-		setShowToast({ ...showToast, isShow: value });
-	};
+	const loading = useSelector((state) => state.systemReducer.loading);
+	const [idToast, setIdToast] = useState(null);
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
@@ -30,11 +25,9 @@ function Login() {
 		email: '',
 		password: '',
 	});
-	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		if (authReducer.isAuth) {
-			setLoading(false);
 			navigate('/');
 		}
 	}, [authReducer.isAuth]);
@@ -55,21 +48,44 @@ function Login() {
 			});
 			return false;
 		}
-		setLoading(true);
+		dispatch({
+			type: LOADING_TRUE,
+		});
 		const result = await dispatch(
 			authMiddleware.login({
 				...form,
 			}),
 		);
 		if (!authReducer.isAuth && typeof result === 'object') {
-			setLoading(false);
-			showToast.isShow = true;
-			showToast.content = result.mes;
-			showToast.type = 'error';
-			setShowToast({ ...showToast });
+			const id = Date.now();
+			setIdToast(id);
+			dispatch({
+				type: SHOW_TOAST,
+				payload: {
+					type: 'error',
+					content: result.mes,
+					id,
+				},
+			});
 		}
+		dispatch({
+			type: LOADING_FALSE,
+		});
 		return true;
 	};
+
+	useEffect(() => {
+		const enterKeyDown = (e) => {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				submit();
+			}
+		};
+		document.addEventListener('keydown', enterKeyDown);
+		return () => {
+			document.removeEventListener('keydown', enterKeyDown);
+		};
+	}, [form]);
 
 	const forgetPassword = () => {
 		navigate('/forget_password');
@@ -135,16 +151,7 @@ function Login() {
 				</div>
 			</div>
 			{loading ? <Loading loading={loading} isFullScreen={1} /> : <> </>}
-			{showToast.isShow ? (
-				<Toast
-					content={showToast.content}
-					time={showToast.time}
-					type={showToast.type}
-					setShow={setShow}
-				/>
-			) : (
-				<> </>
-			)}
+			{idToast ? <Toast id={idToast} /> : <> </>}
 		</>
 	);
 }

@@ -1,17 +1,23 @@
 import {
-	LOADING_FALSE, LOADING_TRUE,
+	CLOSE_TOAST,
+	LOADING_FALSE, LOADING_TRUE, SHOW_TOAST,
 } from '../../services/constants';
 
 const initState = {
 	loading: null,
 	countLoading: 0,
+	// isShowToast: false,
+	// type: null,
+	// content: null,
+	// time: 2000,
+	// id: 1,
+	toastes: [],
 };
 
 // eslint-disable-next-line default-param-last
 const systemReducer = (state = initState, action) => {
 	switch (action.type) {
 		case LOADING_TRUE: {
-			console.log('bắt đầu load');
 			const { countLoading } = state;
 			return {
 				...state,
@@ -21,7 +27,6 @@ const systemReducer = (state = initState, action) => {
 		}
 
 		case LOADING_FALSE: {
-			console.log('kết thúc load');
 			const { countLoading } = state;
 			if (countLoading > 1) {
 				return {
@@ -34,6 +39,29 @@ const systemReducer = (state = initState, action) => {
 				...state,
 				loading: false,
 				countLoading: 0,
+			};
+		}
+
+		case SHOW_TOAST: {
+			return {
+				...state,
+				toastes: [
+					...state.toastes,
+					{
+						isShowToast: true,
+						type: action.payload?.type || 'default',
+						content: action.payload?.content || 'Không có thông báo',
+						time: 2000,
+						id: action.payload.id,
+					},
+				],
+			};
+		}
+
+		case CLOSE_TOAST: {
+			state.toastes.splice(action.payload.index, 1);
+			return {
+				...state,
 			};
 		}
 

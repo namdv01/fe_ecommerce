@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import Cart from './Base/Cart';
 import Landing from './Base/Landing';
+import Loading from './Base/Loading';
 import ItemDetail from './components/Content/ItemDetail';
+import Profile from './components/User/Profile';
 import ForgetPassword from './Forms/ForgetPassword';
 import Login from './Forms/Login';
 import Register from './Forms/Register';
@@ -17,6 +19,7 @@ import authMiddleware from './store/middleware/auth';
 
 function App() {
 	const authReducer = useSelector((state) => state.authReducer);
+	const loading = useSelector((state) => state.systemReducer.loading);
 	const dispatch = useDispatch();
 	// eslint-disable-next-line no-unused-vars
 	const refresh = async () => {
@@ -35,22 +38,28 @@ function App() {
 	}, []);
 
 	return (
-		<Routes>
-			<Route path="/">
-				<Route path="/" element={<Home />}>
-					<Route index element={<Landing />} />
-					<Route path="cart" element={<Cart />} />
-					<Route path="item/:id_item" element={<ItemDetail />} />
+		<>
+			<Routes>
+				<Route path="/">
+					<Route path="/" element={<Home />}>
+						<Route index element={<Landing />} />
+						<Route path="cart" element={<Cart />} />
+						<Route path="profile" element={<Profile />} />
+						<Route path="item/:id_item" element={<ItemDetail />} />
+					</Route>
+					<Route path="login" element={<Login />} />
+					<Route path="forget_password" element={<ForgetPassword />} />
+					<Route path="register" element={<Register />} />
 				</Route>
-				<Route path="login" element={<Login />} />
-				<Route path="forget_password" element={<ForgetPassword />} />
-				<Route path="register" element={<Register />} />
-			</Route>
-			<Route path="/admin" element={<Admin />} />
-			<Route path="/buyer" element={<Buyer />} />
-			<Route path="/seller" element={<Seller />} />
-			<Route path="*" element={<NotFound />} />
-		</Routes>
+				<Route path="/admin" element={<Admin />} />
+				<Route path="/buyer" element={<Buyer />} />
+				<Route path="/seller" element={<Seller />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+			{
+				loading ? <Loading isFullScreen /> : <> </>
+			}
+		</>
 	);
 }
 

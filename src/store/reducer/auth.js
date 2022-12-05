@@ -1,5 +1,5 @@
 import {
-	LOGIN, LOGOUT, REFRESH, REGISTER,
+	LOGIN, LOGOUT, REFRESH, REGISTER, UPDATE_PROFILE,
 } from '../../services/constants';
 import authActions from '../actions/auth';
 
@@ -14,11 +14,13 @@ const authReducer = (state = initState, action) => {
 		case LOGIN:
 			return authActions.login(state, action.payload);
 		case LOGOUT:
-			return state;
+			return authActions.logout(state);
 		case REFRESH:
 			return state;
 		case REGISTER:
 			return state;
+		case UPDATE_PROFILE:
+			return authActions.updateProfile(state, action.payload);
 		default:
 			return state;
 	}
