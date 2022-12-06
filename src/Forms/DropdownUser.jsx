@@ -39,7 +39,7 @@ function DropdownUser() {
 	}, []);
 	return (
 		<>
-			<div className="absolute top-[95%] z-[2] bg-white text-black min-w-[150px] flex flex-col left-0 overflow-hidden rounded shadow-slate-900 shadow-lg">
+			<div className="absolute top-[95%] z-[20] bg-white text-black min-w-[150px] flex flex-col left-0 overflow-hidden rounded shadow-slate-900 shadow-lg">
 				<span
 					className="border-b block h-10 leading-10 cursor-pointer hover:bg-slate-200 text-center"
 					aria-hidden

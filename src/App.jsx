@@ -5,7 +5,11 @@ import Cart from './Base/Cart';
 import Landing from './Base/Landing';
 import Loading from './Base/Loading';
 import ItemDetail from './components/Content/ItemDetail';
+import Comment from './components/User/Comment';
+import Notify from './components/User/Notify';
+import Order from './components/User/Order';
 import Profile from './components/User/Profile';
+import Report from './components/User/Report';
 import ForgetPassword from './Forms/ForgetPassword';
 import Login from './Forms/Login';
 import Register from './Forms/Register';
@@ -46,13 +50,20 @@ function App() {
 						<Route path="cart" element={<Cart />} />
 						<Route path="profile" element={<Profile />} />
 						<Route path="item/:id_item" element={<ItemDetail />} />
+						<Route path="buyer" element={<Buyer />}>
+							<Route path="orders" element={<Order />} />
+							<Route path="orders/:stateOrder" element={<Order />} />
+							<Route path="comments" element={<Comment />} />
+							<Route path="notify" element={<Notify />} />
+							<Route path="report" element={<Report />} />
+						</Route>
 					</Route>
 					<Route path="login" element={<Login />} />
 					<Route path="forget_password" element={<ForgetPassword />} />
 					<Route path="register" element={<Register />} />
 				</Route>
 				<Route path="/admin" element={<Admin />} />
-				<Route path="/buyer" element={<Buyer />} />
+
 				<Route path="/seller" element={<Seller />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
