@@ -1,41 +1,32 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CardItem from '../components/Content/CardItem';
 import SlideShow from '../components/Content/SlideShow';
 import Pagination from './Pagination';
-import api from '../config/api';
 import { LOADING_FALSE, LOADING_TRUE } from '../services/constants';
+import systemMiddleware from '../store/middleware/system';
 
 function Landing() {
-	const [items, setItems] = useState([]);
-	const [page, setPage] = useState({
-		total: null,
-		current: null,
-	});
+	const {
+		products, nameProduct, minCostProduct, maxCostProduct,
+	} = useSelector((state) => state.systemReducer);
 	const listRef = useRef();
 	const dispatch = useDispatch();
 	const callApi = async () => {
 		dispatch({
 			type: LOADING_TRUE,
 		});
-		const result = await api.get('user/search_product');
-		if (result.errCode === 0) {
-			setItems(result.payload.products);
-			setPage({
-				...page,
-				total: result.payload.totalPage,
-				current: result.payload.page,
-			});
-		}
+		const value = {};
+		if (nameProduct) value.name = nameProduct;
+		if (minCostProduct) value.min = minCostProduct;
+		if (maxCostProduct) value.max = maxCostProduct;
+		await dispatch(systemMiddleware.searchProduct(value));
 		dispatch({
 			type: LOADING_FALSE,
 		});
 	};
 	const changePage = (numberPage) => {
-		setPage({
-			...page,
-			current: numberPage,
-		});
+		console.log(numberPage);
 	};
 	useEffect(() => {
 		callApi();
@@ -51,32 +42,29 @@ function Landing() {
 	// 	}
 	// };
 	useEffect(() => {
-		console.log(listRef);
 	}, [listRef.clientHeight]);
 
 	return (
 		<div
 			ref={listRef}
-			onClick={
-				(e) => {
-					console.log(e);
-				}
-			}
 			aria-hidden
 		>
 			<SlideShow />
 			<div className="flex flex-col">
-				{items.map((item) => (
+				{products.length === 0 ? <div>Không có sản phẩm nào</div> : products.map((item) => (
 					<div key={item.id}>
 						<CardItem item={item} />
 					</div>
 				))}
+
 			</div>
-			<Pagination
-				totalPage={page.total}
-				numberPage={page.current}
-				changePage={changePage}
-			/>
+			{products.length === 0 ? <> </> : (
+				<Pagination
+					totalPage={products.total}
+					numberPage={products.current}
+					changePage={changePage}
+				/>
+			)}
 		</div>
 	);
 }

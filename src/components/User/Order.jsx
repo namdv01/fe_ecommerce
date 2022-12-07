@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 function Order() {
 	const { stateOrder } = useParams();
+	const location = useLocation();
 	const navigate = useNavigate();
 	const [states, setState] = useState([]);
 	const [items, setItems] = useState([
@@ -116,6 +117,10 @@ function Order() {
 		},
 	]);
 
+	// useEffect(() => {
+	// 	console.log(location);
+	// }, []);
+
 	useEffect(() => {
 		const newState = [
 			{
@@ -150,10 +155,20 @@ function Order() {
 			},
 		];
 		setState([...newState]);
-		if (!stateOrder) {
+		if (!stateOrder && location.pathname.includes('orders')) {
 			navigate('watting');
+		} else if (!stateOrder && !location.pathname.includes('orders')) {
+			navigate('orders/watting');
 		}
 	}, [stateOrder]);
+
+	useEffect(() => {
+		if (states.length > 0 && stateOrder && states.findIndex((st) => st.check === true) < 0) {
+			console.log(stateOrder);
+			console.log(states);
+			// navigate('/not_found');
+		}
+	}, [states]);
 
 	return (
 		<div className="flex flex-col w-[70%] mx-[5%]">

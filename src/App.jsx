@@ -51,6 +51,7 @@ function App() {
 						<Route path="profile" element={<Profile />} />
 						<Route path="item/:id_item" element={<ItemDetail />} />
 						<Route path="buyer" element={<Buyer />}>
+							<Route index element={<Order />} />
 							<Route path="orders" element={<Order />} />
 							<Route path="orders/:stateOrder" element={<Order />} />
 							<Route path="comments" element={<Comment />} />
@@ -65,6 +66,7 @@ function App() {
 				<Route path="/admin" element={<Admin />} />
 
 				<Route path="/seller" element={<Seller />} />
+				<Route path="/not_found" element={<NotFound />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 			{

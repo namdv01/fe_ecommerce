@@ -9,6 +9,7 @@ import api from '../../config/api';
 import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../../services/constants';
 import notImage from '../../assets/image/notImage.png';
 import Toast from '../../Base/Toast';
+import ImagesFullScreen from '../../Base/ImagesFullScreen';
 
 function ItemDetail() {
 	const { id_item: idItem } = useParams();
@@ -19,6 +20,10 @@ function ItemDetail() {
 	const [item, setItem] = useState({
 		itemImageData: [],
 	});
+	const [openImages, setOpenImages] = useState(false);
+	const turnOpenImages = (value) => {
+		setOpenImages(value);
+	};
 	const dispatch = useDispatch();
 	const loading = useSelector((state) => state.systemReducer.loading);
 	const changeNumber = (value) => {
@@ -109,14 +114,28 @@ function ItemDetail() {
 	return (
 		<div>
 			<div className="flex flex-row flex-wrap">
-				<Carousel responsive={responsive} showDots infinite className="w-[600px]">
-					{
-						// eslint-disable-next-line no-unused-vars
-						item.itemImageData.map((image) => (
-							<img src={image.image || notImage} className="w-[600px] h-[400px]" key={Math.random() + image.id} alt="không có ảnh" />
-						))
-					}
-				</Carousel>
+				{
+					item.itemImageData.length > 0
+						? (
+							<Carousel responsive={responsive} showDots infinite className="w-[600px] z-10">
+								{
+								// eslint-disable-next-line no-unused-vars
+									item.itemImageData.map((image) => (
+										<img
+											src={image.image || notImage}
+											onClick={() => setOpenImages(true)}
+											className="w-[600px] h-[400px] hover:cursor-pointer"
+											key={Math.random() + image.id}
+											alt="không có ảnh"
+											aria-hidden
+										/>
+									))
+								}
+							</Carousel>
+						) : (
+							<img src={notImage} alt="" className="w-[600px] h-[400px]" />
+						)
+				}
 				<div>
 					<h4 className="font-bold">{item.name}</h4>
 					<h3>{item.description}</h3>
@@ -159,6 +178,13 @@ function ItemDetail() {
 			</div>
 			{loading ? <Loading isFullScreen /> : <> </>}
 			{idToast ? <Toast id={idToast} /> : <> </>}
+			{openImages ? (
+				<ImagesFullScreen
+					images={item.itemImageData.map((image) => image.image)}
+					turnOpenImages={turnOpenImages}
+				/>
+			)
+				: <> </>}
 		</div>
 	);
 }

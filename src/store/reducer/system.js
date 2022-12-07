@@ -1,6 +1,6 @@
 import {
 	CLOSE_TOAST,
-	LOADING_FALSE, LOADING_TRUE, SHOW_TOAST,
+	LOADING_FALSE, LOADING_TRUE, SEARCH_PRODUCT, SHOW_TOAST, SIZE, CHANGE_SEARCH_PRODUCT,
 } from '../../services/constants';
 
 const initState = {
@@ -12,6 +12,12 @@ const initState = {
 	// time: 2000,
 	// id: 1,
 	toastes: [],
+	products: [],
+	sizeProduct: SIZE,
+	pageProduct: 1,
+	nameProduct: '',
+	minCostProduct: null,
+	maxCostProduct: null,
 };
 
 // eslint-disable-next-line default-param-last
@@ -62,6 +68,30 @@ const systemReducer = (state = initState, action) => {
 			state.toastes.splice(action.payload.index, 1);
 			return {
 				...state,
+			};
+		}
+
+		case SEARCH_PRODUCT: {
+			if (action.payload.type === 'loadMore') {
+				return {
+					...state,
+					pageProduct: action.payload.page,
+					products: [...state.products, ...action.payload.products],
+				};
+			}
+			return {
+				...state,
+				pageProduct: action.payload.page,
+				products: [...action.payload.products],
+			};
+		}
+
+		case CHANGE_SEARCH_PRODUCT: {
+			return {
+				...state,
+				nameProduct: action.payload.nameProduct,
+				minCostProduct: action.payload.minCostProduct,
+				maxCostProduct: action.payload.maxCostProduct,
 			};
 		}
 
