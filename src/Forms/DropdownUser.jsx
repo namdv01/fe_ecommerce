@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Base/Loading';
-import { LOADING_FALSE, LOADING_TRUE } from '../services/constants';
+import { LOADING_NULL, LOADING_TRUE } from '../services/constants';
 import authMiddleware from '../store/middleware/auth';
 
 function DropdownUser() {
@@ -25,9 +25,9 @@ function DropdownUser() {
 		await dispatch(authMiddleware.logout());
 
 		dispatch({
-			type: LOADING_FALSE,
+			type: LOADING_NULL,
 		});
-		navigate('/');
+		navigate('/', { replace: true });
 	};
 	const goAnotherPage = (value) => {
 		navigate(value);

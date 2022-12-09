@@ -1,6 +1,7 @@
 import {
 	CLOSE_TOAST,
 	LOADING_FALSE, LOADING_TRUE, SEARCH_PRODUCT, SHOW_TOAST, SIZE, CHANGE_SEARCH_PRODUCT,
+	LOADING_NULL,
 } from '../../services/constants';
 
 const initState = {
@@ -44,6 +45,14 @@ const systemReducer = (state = initState, action) => {
 			return {
 				...state,
 				loading: false,
+				countLoading: 0,
+			};
+		}
+
+		case LOADING_NULL: {
+			return {
+				...state,
+				loading: null,
 				countLoading: 0,
 			};
 		}

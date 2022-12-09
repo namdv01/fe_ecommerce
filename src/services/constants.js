@@ -4,6 +4,7 @@ export const REFRESH = 'REFRESH';
 export const LOGOUT = 'LOGOUT';
 export const LOADING_TRUE = 'LOADING_TRUE';
 export const LOADING_FALSE = 'LOADING_FALSE';
+export const LOADING_NULL = 'LOADING_NULL';
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const SHOW_TOAST = 'SHOW_TOAST';
 export const CLOSE_TOAST = 'CLOSE_TOAST';

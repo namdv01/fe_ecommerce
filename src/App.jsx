@@ -5,6 +5,10 @@ import Cart from './Base/Cart';
 import Landing from './Base/Landing';
 import Loading from './Base/Loading';
 import ItemDetail from './components/Content/ItemDetail';
+import Product from './components/Shop/Product';
+import Origin from './components/Shop/Origin';
+import OrderShop from './components/Shop/Order';
+import CommentShop from './components/Shop/Comment';
 import Comment from './components/User/Comment';
 import Notify from './components/User/Notify';
 import Order from './components/User/Order';
@@ -45,7 +49,7 @@ function App() {
 		<>
 			<Routes>
 				<Route path="/">
-					<Route path="/" element={<Home />}>
+					<Route path="" element={<Home />}>
 						<Route index element={<Landing />} />
 						<Route path="cart" element={<Cart />} />
 						<Route path="profile" element={<Profile />} />
@@ -53,19 +57,27 @@ function App() {
 						<Route path="buyer" element={<Buyer />}>
 							<Route index element={<Order />} />
 							<Route path="orders" element={<Order />} />
-							<Route path="orders/:stateOrder" element={<Order />} />
+							<Route path="orders" element={<Order />} />
 							<Route path="comments" element={<Comment />} />
 							<Route path="notify" element={<Notify />} />
 							<Route path="report" element={<Report />} />
 						</Route>
+						<Route path="admin" element={<Admin />}>
+							{/* <div>1</div> */}
+						</Route>
+						<Route path="seller/:idShop" element={<Seller />}>
+							{/* <div>2</div> */}
+							<Route path="product" element={<Product />} />
+							<Route path="orders" element={<OrderShop />} />
+							{/* <Route path="orders/:stateOrder" element={<OrderShop />} /> */}
+							<Route path="comment" element={<CommentShop />} />
+						</Route>
+						<Route path="seller/origin" element={<Origin />} />
 					</Route>
 					<Route path="login" element={<Login />} />
 					<Route path="forget_password" element={<ForgetPassword />} />
 					<Route path="register" element={<Register />} />
 				</Route>
-				<Route path="/admin" element={<Admin />} />
-
-				<Route path="/seller" element={<Seller />} />
 				<Route path="/not_found" element={<NotFound />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>

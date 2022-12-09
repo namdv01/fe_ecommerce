@@ -18,7 +18,14 @@ function Buyer() {
 			authReducer.profile.position !== 'buyer'
 		) {
 			console.log('Không hợp lệ');
-			navigate('/');
+			const id = Math.random();
+			navigate('/', {
+				state: {
+					id,
+					content: 'Không đúng vai trò người mua',
+					type: 'warning',
+				},
+			});
 		}
 	}, [loading]);
 	return (
