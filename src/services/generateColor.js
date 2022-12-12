@@ -4,7 +4,7 @@ const generateColor = (number) => {
 	for (let i = 0; i < number; i += 1) {
 		result.push(list[Math.floor(Math.random() * 16)]);
 	}
-	if (result.findIndex((item) => item !== 255) < 0) return generateColor(number);
+	if (result.findIndex((item) => item !== 'f') < 0) return generateColor(number);
 	return `#${result.join('')}`;
 };
 

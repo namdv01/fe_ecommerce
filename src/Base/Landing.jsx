@@ -5,13 +5,15 @@ import CardItem from '../components/Content/CardItem';
 import SlideShow from '../components/Content/SlideShow';
 import Pagination from './Pagination';
 // eslint-disable-next-line no-unused-vars
-import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../services/constants';
+import {
+	LOADING_FALSE, LOADING_TRUE, SHOW_TOAST,
+} from '../services/constants';
 import systemMiddleware from '../store/middleware/system';
 import Toast from './Toast';
 
 function Landing() {
 	const {
-		products, nameProduct, minCostProduct, maxCostProduct,
+		products, nameProduct, minCostProduct, maxCostProduct, pageProduct,
 	} = useSelector((state) => state.systemReducer);
 	const listRef = useRef();
 	const dispatch = useDispatch();
@@ -34,10 +36,7 @@ function Landing() {
 	};
 	useEffect(() => {
 		callApi();
-		console.log(location);
 		if (location.state && location.state.id) {
-			console.log(location.state.id);
-			console.log('có show ');
 			dispatch({
 				type: SHOW_TOAST,
 				payload: {
@@ -47,26 +46,38 @@ function Landing() {
 		}
 	}, []);
 
-	// const onScroll = () => {
-	// 	console.log(123);
-	// 	if (listRef.current) {
-	// 		const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-	// 		if (scrollTop + clientHeight === scrollHeight) {
-	// 			console.log('sẽ call thêm api tại đây');
-	// 		}
-	// 	}
-	// };
 	useEffect(() => {
-	}, [listRef.clientHeight]);
+		const show = async () => {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+				dispatch({
+					type: LOADING_TRUE,
+				});
+				await dispatch(systemMiddleware.searchProduct({ page: pageProduct + 1 }));
+				dispatch({
+					type: LOADING_FALSE,
+				});
+			}
+		};
+		document.addEventListener('scroll', show, true);
+		return () => {
+			document.removeEventListener('scroll', show, true);
+		};
+	}, []);
 
 	return (
 		<div
-			ref={listRef}
 			aria-hidden
 		>
 			<SlideShow />
 			{location.state?.id ? <Toast id={location.state?.id} /> : <> </>}
-			<div className="flex flex-col">
+			<div
+				className="flex flex-col"
+				ref={listRef}
+				// onScroll={() => {
+				// 	const { offsetTop } = listRef.current;
+				// 	console.log(offsetTop);
+				// }}
+			>
 				{products.length === 0 ? <div>Không có sản phẩm nào</div> : products.map((item) => (
 					<div key={item.id}>
 						<CardItem item={item} />
@@ -76,7 +87,7 @@ function Landing() {
 			</div>
 			{products.length === 0 ? <> </> : (
 				<Pagination
-					totalPage={products.total}
+					totalPage={products.total || 0}
 					numberPage={products.current}
 					changePage={changePage}
 				/>

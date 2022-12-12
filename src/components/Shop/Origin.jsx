@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import CreateShop from '../../Forms/CreateShop';
 import formatDay from '../../services/formatDay';
@@ -10,6 +10,7 @@ function Origin() {
 	const loading = useSelector((state) => state.systemReducer.loading);
 	const navigate = useNavigate();
 	const authReducer = useSelector((state) => state.authReducer);
+	const location = useLocation();
 	// eslint-disable-next-line no-unused-vars
 	const [idToast, setIdToast] = useState(null);
 	const [isCreateShop, setCreateShop] = useState(false);
@@ -63,6 +64,16 @@ function Origin() {
 			});
 		}
 	}, [loading]);
+
+	useEffect(() => {
+		if (!location.pathname.includes('origin')) {
+			navigate('origin');
+		}
+	}, []);
+
+	const changePage = (idShop) => {
+		navigate(`/seller/${idShop}/orders`);
+	};
 	return (
 		<div className="flex flex-row flex-wrap h-screen items-center justify-center relative">
 			{
@@ -73,6 +84,10 @@ function Origin() {
 							background: shop.color,
 						}}
 						className="border rounded-lg p-4 text-xl inline-block m-4 text-white hover:cursor-pointer"
+						onClick={() => {
+							changePage(shop.id);
+						}}
+						aria-hidden
 					>
 						<div>
 							{shop.shopName}

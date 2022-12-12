@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import NavMenuManage from '../components/Content/NavMenuManage';
 
 function Admin() {
 	const authReducer = useSelector((state) => state.authReducer);
@@ -20,7 +21,14 @@ function Admin() {
 			navigate('/');
 		}
 	}, [loading]);
-	return <div>Admin</div>;
+	return (
+		<div className="flex flex-row mx-[5%]">
+			<NavMenuManage />
+			<div className="mt-16 w-full">
+				<Outlet />
+			</div>
+		</div>
+	);
 }
 
 export default Admin;

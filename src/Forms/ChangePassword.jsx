@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import api from '../config/api';
 import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../services/constants';
@@ -12,6 +12,7 @@ function ChangePassword({ ...props }) {
 		newPassword: '',
 		confirmNewPassword: '',
 	});
+	const myRef = useRef();
 	const dispatch = useDispatch();
 	const [error, setError] = useState({});
 	const changeValue = (e, value) => {
@@ -58,9 +59,21 @@ function ChangePassword({ ...props }) {
 		props.setModalPassword(false);
 		return true;
 	};
+
+	useEffect(() => {
+		const clickOutSide = (e) => {
+			if (myRef.current && !myRef.current.contains(e.target)) {
+				props.setModalPassword(false);
+			}
+		};
+		document.addEventListener('click', clickOutSide, true);
+		return () => {
+			document.removeEventListener('click', clickOutSide, true);
+		};
+	}, []);
 	return (
 		<div className="w-full h-screen bg-slate-400 flex items-center justify-center fixed top-0 bottom-0 left-0 right-0 z-10 opacity-80">
-			<div className="bg-white border rounded-lg">
+			<div className="bg-white border rounded-lg" ref={myRef}>
 				<div className="p-2 border rounded shadow">
 					<h2 className="py-3">Đổi mật khẩu</h2>
 					<div className="flex flex-row flex-wrap mb-4">

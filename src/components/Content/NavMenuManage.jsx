@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function NavMenuManage() {
 	const authReducer = useSelector((state) => state.authReducer);
+	const location = useLocation();
 	// eslint-disable-next-line no-unused-vars
 	const [list, setList] = useState({
 		buyer: [
 			{
 				title: 'Đơn hàng',
 				link: 'orders/watting',
-				check: true,
+				check: false,
 			},
 			{
 				title: 'Bình luận',
@@ -62,7 +63,7 @@ function NavMenuManage() {
 			},
 			{
 				title: 'Đơn hàng',
-				link: 'order/watting',
+				link: 'order',
 				check: false,
 			},
 			{
@@ -80,6 +81,12 @@ function NavMenuManage() {
 	// eslint-disable-next-line no-unused-vars
 	const navigate = useNavigate();
 	useEffect(() => {
+		const listLocation = location.pathname.split('/');
+		list[listLocation[1]] = list[listLocation[1]].map((item) => {
+			if (item.link === listLocation[listLocation.length - 1]) return { ...item, check: true };
+			return item;
+		});
+		setList({ ...list });
 	}, []);
 	const changePage = (link) => {
 		const newList = list[authReducer.isAuth ? authReducer.profile.position : 'buyer']
@@ -92,7 +99,7 @@ function NavMenuManage() {
 		navigate(`${link}`);
 	};
 	return (
-		<div className="w-[20%] h-[70vh] mt-16  min-w-[200px] max-w-[250px] bg-[#da8f2e] p-3 rounded-[16px]">
+		<div className="w-[20%] h-[70vh] mt-16  min-w-[200px] max-w-[250px] bg-[#da8f2e] p-3 mr-4	">
 			{list[authReducer.isAuth ? authReducer.profile.position : 'buyer'].map((item) => (
 				<div
 					className={`py-3 text-lg pl-4 color-white text-bold hover:cursor-pointer hover:text-white ${item.check ? 'text-white' : ''}`}

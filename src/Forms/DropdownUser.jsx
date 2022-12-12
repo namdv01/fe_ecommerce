@@ -12,10 +12,11 @@ function DropdownUser() {
 	const loading = useSelector((state) => state.systemReducer.loading);
 	const [isPosition, setPosition] = useState(null);
 	const getLinkPosition = () => {
-		if (isPosition === 'buyer') return 'Quản lý đơn hàng';
-		if (isPosition === 'seller') return 'Quản lý cửa hàng';
-		if (isPosition === 'admin') return 'Quản lý người dùng';
-		return 'Quản lý';
+		const manage = 'Quản lý ';
+		if (isPosition === 'buyer') return `${manage}đơn hàng`;
+		if (isPosition === 'seller') return `${manage}cửa hàng`;
+		if (isPosition === 'admin') return `${manage}người dùng`;
+		return manage;
 	};
 	const logout = async () => {
 		dispatch({
@@ -50,7 +51,16 @@ function DropdownUser() {
 					Thông tin cá nhân
 				</span>
 				{isPosition ? (
-					<span className="border-b block h-10 leading-10 cursor-pointer hover:bg-slate-200 text-center">{getLinkPosition()}</span>
+					<span
+						className="border-b block h-10 leading-10 cursor-pointer hover:bg-slate-200 text-center"
+						onClick={() => {
+							goAnotherPage(authReducer.profile.position);
+						}}
+						aria-hidden
+					>
+						{getLinkPosition(authReducer.profile.position)}
+
+					</span>
 				) : <> </>}
 				<span className=" block h-10 leading-10 cursor-pointer hover:bg-slate-200 text-center" onClick={logout} aria-hidden>Đăng xuất</span>
 			</div>

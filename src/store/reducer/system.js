@@ -2,6 +2,7 @@ import {
 	CLOSE_TOAST,
 	LOADING_FALSE, LOADING_TRUE, SEARCH_PRODUCT, SHOW_TOAST, SIZE, CHANGE_SEARCH_PRODUCT,
 	LOADING_NULL,
+	SET_PAGE,
 } from '../../services/constants';
 
 const initState = {
@@ -57,6 +58,14 @@ const systemReducer = (state = initState, action) => {
 			};
 		}
 
+		case SET_PAGE: {
+			console.log(state.pageProduct);
+			return {
+				...state,
+				pageProduct: state.pageProduct + 1,
+			};
+		}
+
 		case SHOW_TOAST: {
 			return {
 				...state,
@@ -81,17 +90,17 @@ const systemReducer = (state = initState, action) => {
 		}
 
 		case SEARCH_PRODUCT: {
-			if (action.payload.type === 'loadMore') {
-				return {
-					...state,
-					pageProduct: action.payload.page,
-					products: [...state.products, ...action.payload.products],
-				};
-			}
+			// if (action.payload.type === 'loadMore') {
+			// 	return {
+			// 		...state,
+			// 		pageProduct: action.payload.page,
+			// 		products: [...state.products, ...action.payload.products],
+			// 	};
+			// }
 			return {
 				...state,
 				pageProduct: action.payload.page,
-				products: [...action.payload.products],
+				products: [...state.products, ...action.payload.products],
 			};
 		}
 

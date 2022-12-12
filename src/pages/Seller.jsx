@@ -31,7 +31,9 @@ function Seller() {
 	return (
 		<div className="flex flex-row mx-[5%]">
 			<NavMenuManage />
-			<Outlet />
+			<div className="mt-16 w-full">
+				<Outlet />
+			</div>
 		</div>
 	);
 }

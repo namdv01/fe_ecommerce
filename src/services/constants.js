@@ -12,4 +12,5 @@ export const SEARCH_PRODUCT = 'SEARCH_PRODUCT';
 export const API = 'http://localhost:6789/';
 export const API_PUBLIC = `${API}public/`;
 export const CHANGE_SEARCH_PRODUCT = 'CHANGE_SEARCH_PRODUCT';
-export const SIZE = 20;
+export const SET_PAGE = 'SET_PAGE';
+export const SIZE = 10;

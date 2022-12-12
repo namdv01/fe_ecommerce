@@ -70,6 +70,7 @@ function Cart() {
 			return result;
 		};
 		getCart();
+		console.log(cookies);
 		// const JSOnObj = JSON.parse(JSON.stringify())
 		// eslint-disable-next-line max-len
 		// console.log(JSON.parse(decodeURIComponent('%5B%7B%22itemId%22%3A4%2C%22quantity%22%3A5%7D%2C%7B%22itemId%22%3A5%2C%22quantity%22%3A2%7D%5D')));
