@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import api from '../../config/api';
 import CreateProduct from '../../Forms/CreateProduct';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
 import ProductDetail from './ProductDetail';
 import ProductPromotion from './ProductPromotion';
+import Pagination from '../../Base/Pagination';
 
 function Product() {
 	const [detailProduct, setDetailProduct] = useState(null);
 	const [detailPromotion, setDetailPromotion] = useState(null);
 	const [openCreate, setOpenCreate] = useState(false);
+	const dispatch = useDispatch();
+	const params = useParams();
 	// eslint-disable-next-line no-unused-vars
 	const [products, setProducts] = useState([
 		{
@@ -52,10 +59,51 @@ function Product() {
 			name: 'bánh kẹo',
 		},
 	]);
+	const [page, setPage] = useState({
+		page: 1,
+		totalPage: 1,
+		size: 10,
+	});
 
 	const chooseDetail = (product) => {
-		console.log(product);
 		setDetailProduct(product);
+	};
+	const getDetailShop = async () => {
+		const result = await api.get(`seller/detail_shop/${params.idShop}?page=${page.page}&size=${page.size}`);
+		if (result.errCode === 0) {
+			setProducts([...result.payload.items.itemsData]);
+			setPage({
+				...page,
+				totalPage: result.payload.totalPage,
+				size: result.payload.size,
+				page: result.payload.page,
+			});
+		}
+	};
+	useEffect(() => {
+		dispatch({
+			type: LOADING_TRUE,
+		});
+
+		getDetailShop();
+		dispatch({
+			type: LOADING_FALSE,
+		});
+	}, [page.page]);
+
+	const changePage = (number) => {
+		setPage({
+			...page,
+			page: number + 1,
+		});
+		// dispatch({
+		// 	type: LOADING_TRUE,
+		// });
+
+		// getDetailShop();
+		// dispatch({
+		// 	type: LOADING_FALSE,
+		// });
 	};
 	return (
 		<>
@@ -76,7 +124,7 @@ function Product() {
 					<tbody className="border-l border-black">
 						{products.map((product, index) => (
 							<tr key={Math.random()}>
-								<td className="border-b border-r border-black py-2 px-3 text-center">{index + 1}</td>
+								<td className="border-b border-r border-black py-2 px-3 text-center">{(page.page - 1) * page.size + index + 1}</td>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{product.id}</td>
 								<td className="border-b border-r border-black py-2 px-3">{product.name}</td>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{product.quantity}</td>
@@ -104,7 +152,12 @@ function Product() {
 						))}
 					</tbody>
 				</table>
-				<div className="flex flex-row-reverse">
+				<div className="flex flex-row justify-between">
+					<Pagination
+						numberPage={page.page - 1}
+						totalPage={page.totalPage}
+						changePage={changePage}
+					/>
 					<input
 						type="button"
 						value="Tạo thêm sản phẩm"

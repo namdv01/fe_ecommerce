@@ -17,6 +17,7 @@ const initState = {
 	products: [],
 	sizeProduct: SIZE,
 	pageProduct: 1,
+	totalPage: 1,
 	nameProduct: '',
 	minCostProduct: null,
 	maxCostProduct: null,
@@ -100,6 +101,7 @@ const systemReducer = (state = initState, action) => {
 			return {
 				...state,
 				pageProduct: action.payload.page,
+				totalPage: action.payload.totalPage,
 				products: [...state.products, ...action.payload.products],
 			};
 		}

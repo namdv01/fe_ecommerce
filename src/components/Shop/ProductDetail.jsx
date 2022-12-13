@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import api from '../../config/api';
 import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
 
 function ProductDetail({ ...props }) {
@@ -22,8 +23,21 @@ function ProductDetail({ ...props }) {
 		};
 	}, [loading]);
 	useEffect(() => {
+		dispatch({
+			type: LOADING_TRUE,
+		});
 		setForm(props.product);
-	}, [props]);
+		const callDetailShop = async () => {
+			const result = await api.get(`user/detail_item/${props.product.id}`);
+			if (result.errCode === 0) {
+				setForm({ ...result.payload });
+			}
+		};
+		callDetailShop();
+		dispatch({
+			type: LOADING_FALSE,
+		});
+	}, []);
 	const changeForm = (e, key) => {
 		form[key] = e.target.value;
 		setForm({ ...form });
@@ -39,8 +53,10 @@ function ProductDetail({ ...props }) {
 		}, 2000);
 	};
 	const clearForm = () => {
-		console.log(123);
 		form.name = '';
+		form.price = 0;
+		form.quantity = 0;
+		form.description = '';
 		setForm({
 			...form,
 		});
@@ -49,16 +65,51 @@ function ProductDetail({ ...props }) {
 		<>
 			<div className="opacity-50 fixed top-0 bottom-0 right-0 left-0 z-20 bg-slate-400" />
 			<div ref={myRef} className="flex flex-col fixed z-[21] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-white p-3 rounded shadow-md">
-				<div className="">
-					<label htmlFor="name">Tên: </label>
+				<div className="flex flex-row flex-wrap mb-2">
+					<label className="inline-block w-[80px]" htmlFor="name">Tên: </label>
 					<input
 						type="text"
-						className="outline-none border px-2 py-1"
+						className="outline-none border px-2 py-1 w-[250px]"
 						value={form.name}
 						id="name"
 						onChange={(e) => {
 							changeForm(e, 'name');
 						}}
+					/>
+				</div>
+				<div className="flex flex-row flex-wrap mb-2">
+					<label className="inline-block w-[80px]" htmlFor="price">Giá: </label>
+					<input
+						type="number"
+						className="outline-none border px-2 py-1 w-[250px]"
+						value={form.price}
+						id="name"
+						onChange={(e) => {
+							changeForm(e, 'price');
+						}}
+					/>
+				</div>
+				<div className="flex flex-row flex-wrap mb-2">
+					<label className="inline-block w-[80px]" htmlFor="quantity">Số lượng: </label>
+					<input
+						type="number"
+						className="outline-none border px-2 py-1 w-[250px]"
+						value={form.quantity}
+						id="quantity"
+						onChange={(e) => {
+							changeForm(e, 'quantity');
+						}}
+					/>
+				</div>
+				<div className="flex flex-row flex-wrap mb-2">
+					<label className="inline-block w-[80px]" htmlFor="desc">Mô tả: </label>
+					<textarea
+						id="desc"
+						value={form.description}
+						onChange={(e) => {
+							changeForm(e, 'description');
+						}}
+						className="outline-none border px-2 py-1 min-h-[120px] max-h-[150px] w-[250px]"
 					/>
 				</div>
 				<div className="flex justify-between items-center mt-3">
@@ -67,7 +118,8 @@ function ProductDetail({ ...props }) {
 						className="outline-none border py-1 px-2 bg-[#3ae2d4] hover:bg-[#2fd6ac] hover:cursor-pointer"
 						value="Chỉnh sửa"
 						onClick={(e) => {
-							submitForm(e);
+							e.preventDefault();
+							submitForm();
 						}}
 					/>
 					<input

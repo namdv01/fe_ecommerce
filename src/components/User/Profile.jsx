@@ -73,45 +73,52 @@ function Profile() {
 		}
 	}, [authReducer, loading]);
 	return (
-		<div>
+		<div className="flex w-full items-center justify-center" style={{ height: 'calc(100vh - 64px)' }}>
 			{
 				authReducer.isAuth
 					? (
 						<div className="flex flex-row">
 							<div>
 								<img src={getAvatar()} className="w-16 h-16 border" alt="" />
-								<button type="button" onClick={console.log(123)}>Đổi avatar</button>
+								<button
+									type="button"
+									onClick={() => {
+										console.log(123);
+									}}
+								>
+									Đổi avatar
+								</button>
 							</div>
 							<div className="flex flex-col">
-								<div>
-									<label htmlFor="fullname">Tên: </label>
-									<input type="text" disabled value={authReducer.profile.fullname} id="fullname" onChange={null} />
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="fullname" className="inline-block w-[120px]">Tên: </label>
+									<input type="text" disabled value={authReducer.profile.fullname} className="w-[400px]" id="fullname" onChange={null} />
 								</div>
-								<div>
-									<label htmlFor="password">Mật khẩu: </label>
-									<input type="password" disabled value="Không có mật khẩu đâu" id="password" onChange={null} />
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="password" className="inline-block w-[120px]">Mật khẩu: </label>
+									<input type="password" disabled value="Không có mật khẩu đâu" id="password" onChange={null} className="w-[400px]" />
 								</div>
-								<div>
-									<label htmlFor="email">Email: </label>
-									<input type="text" disabled value={authReducer.profile.email} id="email" onChange={null} />
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="email" className="inline-block w-[120px]">Email: </label>
+									<input type="text" disabled value={authReducer.profile.email} id="email" onChange={null} className="w-[400px]" />
 								</div>
-								<div>
-									<label htmlFor="phoneNumber">Số điện thoại: </label>
-									<input type="text" value={form.phoneNumber} id="phoneNumber" onChange={(e) => { changeValue(e, 'phoneNumber'); }} />
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="phoneNumber" className="inline-block w-[120px]">Số điện thoại: </label>
+									<input type="text" value={form.phoneNumber} id="phoneNumber" onChange={(e) => { changeValue(e, 'phoneNumber'); }} className="w-[400px]" />
 								</div>
-								<div>
-									<label htmlFor="address">Địa chỉ: </label>
-									<input type="text" value={form.address} id="address" onChange={(e) => { changeValue(e, 'address'); }} />
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="address" className="inline-block w-[120px]">Địa chỉ: </label>
+									<input type="text" value={form.address} id="address" onChange={(e) => { changeValue(e, 'address'); }} className="w-[400px]" />
 								</div>
-								<div>
-									<label htmlFor="gender">Giới tính: </label>
-									<select name="" id="gender" value={form.gender} onChange={(e) => { changeValue(e, 'gender'); }}>
+								<div className="flex flex-row flex-wrap">
+									<label htmlFor="gender" className="inline-block w-[120px]">Giới tính: </label>
+									<select name="" id="gender" value={form.gender} onChange={(e) => { changeValue(e, 'gender'); }} className="w-[400px]">
 										<option value="female">Nữ</option>
 										<option value="male">Nam</option>
 										<option value="other">Khác</option>
 									</select>
 								</div>
-								<div className="flex flex-row">
+								<div className="flex flex-row flex-wrap">
 									<button type="button" onClick={updateProfile}>Cập nhật thông tin</button>
 									<button type="button" onClick={openModal}>Đổi mật khẩu</button>
 								</div>

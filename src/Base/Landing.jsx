@@ -13,7 +13,7 @@ import Toast from './Toast';
 
 function Landing() {
 	const {
-		products, nameProduct, minCostProduct, maxCostProduct, pageProduct,
+		products, nameProduct, minCostProduct, maxCostProduct, pageProduct, totalPage,
 	} = useSelector((state) => state.systemReducer);
 	const listRef = useRef();
 	const dispatch = useDispatch();
@@ -48,7 +48,8 @@ function Landing() {
 
 	useEffect(() => {
 		const show = async () => {
-			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight
+			&& pageProduct <= totalPage) {
 				dispatch({
 					type: LOADING_TRUE,
 				});
@@ -62,7 +63,7 @@ function Landing() {
 		return () => {
 			document.removeEventListener('scroll', show, true);
 		};
-	}, []);
+	}, [pageProduct]);
 
 	return (
 		<div
@@ -73,13 +74,9 @@ function Landing() {
 			<div
 				className="flex flex-col"
 				ref={listRef}
-				// onScroll={() => {
-				// 	const { offsetTop } = listRef.current;
-				// 	console.log(offsetTop);
-				// }}
 			>
 				{products.length === 0 ? <div>Không có sản phẩm nào</div> : products.map((item) => (
-					<div key={item.id}>
+					<div key={Math.random() + item.id}>
 						<CardItem item={item} />
 					</div>
 				))}

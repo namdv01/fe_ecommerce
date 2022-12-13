@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import api from '../../config/api';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
 import OrderDetail from './OrderDetail';
+import formatDay from '../../services/formatDay';
 
 function Order() {
-	const { stateOrder } = useParams();
-	const location = useLocation();
-	const [states, setState] = useState([]);
+	const params = useParams();
+	const dispatch = useDispatch();
 	const [detail, setDetail] = useState(null);
-	// eslint-disable-next-line no-unused-vars
 	const [orders, setOrder] = useState([
 		{
 			id: 123,
@@ -86,10 +88,7 @@ function Order() {
 			status: 'done',
 		},
 	]);
-	const navigate = useNavigate();
-	useEffect(() => {
-		console.log(stateOrder);
-	}, []);
+
 	const convertStatus = (status) => {
 		switch (status) {
 			case 'done':
@@ -105,56 +104,37 @@ function Order() {
 		}
 	};
 
-	useEffect(() => {
-		const newState = [
-			{
-				title: 'Đợi xác nhận',
-				state: 'watting',
-				check: stateOrder === 'watting',
-				id: 1,
-			},
-			{
-				title: 'Đã xác nhận',
-				state: 'confirm',
-				check: stateOrder === 'confirm',
-				id: 2,
-			},
-			{
-				title: 'Đang giao hàng',
-				state: 'delivering',
-				check: stateOrder === 'delivering',
-				id: 3,
-			},
-			{
-				title: 'Đã giao hàng',
-				state: 'done',
-				check: stateOrder === 'done',
-				id: 4,
-			},
-			{
-				title: 'Hủy',
-				state: 'cancel',
-				check: stateOrder === 'cancel',
-				id: 5,
-			},
-		];
-		setState([...newState]);
-		// if (!stateOrder && location.pathname.includes('orders')) {
-		// 	navigate('watting');
-		// } else if (!stateOrder && !location.pathname.includes('orders')) {
-		// 	navigate('orders');
-		// }
-	}, [stateOrder]);
-	useEffect(() => {
-		if (states.length > 0 && stateOrder && states.findIndex((st) => st.check === true) < 0) {
-			console.log(stateOrder);
-			console.log(states);
-			// navigate('/not_found');
-		}
-	}, [states]);
-
 	const chooseDetail = (order) => {
 		setDetail(order);
+	};
+	const callOrders = async () => {
+		const result = await api.get(`seller/list_order/${params.idShop}`);
+		if (result.errCode === 0) {
+			setOrder(result.payload);
+		}
+	};
+	useEffect(() => {
+		dispatch({
+			type: LOADING_TRUE,
+		});
+		callOrders();
+		dispatch({
+			type: LOADING_FALSE,
+		});
+	}, []);
+	const convertStateOrder = (value) => {
+		switch (value) {
+			case 'none':
+				return 'Chưa xác nhận';
+			case 'delivering':
+				return 'Đang giao hàng';
+			case 'done':
+				return 'Đã giao';
+			case 'cancel':
+				return 'Hủy';
+			default:
+				return value;
+		}
 	};
 	return (
 		<>
@@ -178,8 +158,8 @@ function Order() {
 							<tr key={Math.random()}>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{index + 1}</td>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{order.id}</td>
-								<td className="border-b border-r border-black py-2 px-3">{order.customer}</td>
-								<td className="border-b border-r border-black py-2 px-3">{order.timeOrder}</td>
+								<td className="border-b border-r border-black py-2 px-3">{order.userData?.fullname}</td>
+								<td className="border-b border-r border-black py-2 px-3">{formatDay.TDMY(order.timeOrder)}</td>
 								<td className="border-b border-r border-black py-2 px-3">
 									<input
 										type="button"
@@ -190,7 +170,7 @@ function Order() {
 										className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400"
 									/>
 								</td>
-								<td className="border-b border-r border-black py-2 px-3">{convertStatus(order.status)}</td>
+								<td className="border-b border-r border-black py-2 px-3">{convertStateOrder(order.deliver)}</td>
 								<td className="border-b border-r border-black py-2 px-3">
 									<input type="button" value="Thay đổi" className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400" />
 								</td>
@@ -201,9 +181,7 @@ function Order() {
 			</div>
 			{detail ? (
 				<OrderDetail
-					id={detail.id}
-					items={detail.detail}
-					status={convertStatus(detail.status)}
+					payload={detail}
 					setDetail={setDetail}
 				/>
 			) : <> </>}

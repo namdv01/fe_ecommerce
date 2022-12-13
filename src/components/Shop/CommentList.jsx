@@ -157,7 +157,7 @@ function CommentList({ ...props }) {
 									}}
 									aria-hidden
 								>
-									<img src={image} alt="" />
+									<img src={image} key={Date.now()} alt="" />
 								</div>
 							)) }
 					</div>
