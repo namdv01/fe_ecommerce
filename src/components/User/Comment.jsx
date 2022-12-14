@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Rating from 'react-rating';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
 import ImagesFullScreen from '../../Base/ImagesFullScreen';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import api from '../../config/api';
 
 function Comment() {
 	const [comments, setComments] = useState([
@@ -102,9 +105,20 @@ function Comment() {
 	const turnOpenImages = (value) => {
 		setOpenImages(value);
 	};
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-
+		const callComments = async () => {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			const result = await api.get('user/list_comments');
+			console.log(result);
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		};
+		callComments();
 	}, []);
 	return (
 		<div className="flex flex-row flex-wrap mt-14">

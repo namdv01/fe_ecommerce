@@ -64,6 +64,7 @@ function App() {
 						<Route path="buyer" element={<Buyer />}>
 							<Route index element={<Order />} />
 							<Route path="orders" element={<Order />} />
+							<Route path="orders/:stateOrder" element={<Order />} />
 							<Route path="comments" element={<Comment />} />
 							<Route path="notify" element={<Notify />} />
 							<Route path="report" element={<Report />} />

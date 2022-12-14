@@ -72,9 +72,10 @@ function ChangePassword({ ...props }) {
 		};
 	}, []);
 	return (
-		<div className="w-full h-screen bg-slate-400 flex items-center justify-center fixed top-0 bottom-0 left-0 right-0 z-10 opacity-80">
-			<div className="bg-white border rounded-lg" ref={myRef}>
-				<div className="p-2 border rounded shadow">
+		<>
+			<div className="w-full h-screen bg-slate-100 flex items-center justify-center fixed top-0 bottom-0 left-0 right-0 z-10 opacity-70" />
+			<div className="w-full h-screen z-[11] flex items-center justify-center fixed top-0 bottom-0 left-0 right-0">
+				<div className="p-2 border bg-white rounded-lg shadow" ref={myRef}>
 					<h2 className="py-3">Đổi mật khẩu</h2>
 					<div className="flex flex-row flex-wrap mb-4">
 						<label htmlFor="currentPassword" className="min-w-[180px]">Mật khẩu hiện tại: </label>
@@ -129,7 +130,8 @@ function ChangePassword({ ...props }) {
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
+
 	);
 }
 

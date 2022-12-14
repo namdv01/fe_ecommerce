@@ -1,12 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
+import NumberFormat from 'react-number-format';
+import api from '../../config/api';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import formatDay from '../../services/formatDay';
 
 function Order() {
 	const { stateOrder } = useParams();
 	const location = useLocation();
 	const navigate = useNavigate();
 	const [states, setState] = useState([]);
+	const dispatch = useDispatch();
 	const [items, setItems] = useState([
 		{
 			idOrder: 1,
@@ -163,12 +170,40 @@ function Order() {
 	}, [stateOrder]);
 
 	useEffect(() => {
+		console.log(stateOrder);
 		if (states.length > 0 && stateOrder && states.findIndex((st) => st.check === true) < 0) {
 			console.log(stateOrder);
 			console.log(states);
 			// navigate('/not_found');
 		}
 	}, [states]);
+
+	const convertMethodPayment = (value) => {
+		switch (value) {
+			case 'afterReveice':
+				return 'Thanh toán khi nhận hàng';
+			case 'paypal':
+				return 'Tài khoản Paypal';
+			default:
+				return value;
+		}
+	};
+
+	useEffect(() => {
+		const callOrder = async () => {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			const result = await api.get('user/list_orders', { params: { status: stateOrder } });
+			if (result.errCode === 0) {
+				setItems([...result.payload.orders]);
+			}
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		};
+		callOrder();
+	}, [stateOrder]);
 
 	return (
 		<div className="flex flex-col w-[70%] mx-[5%]">
@@ -194,41 +229,41 @@ function Order() {
 			<div>
 				{
 					items.map((item) => (
-						<div className="flex flex-row p-2 border rounded-2xl">
+						<div className="flex flex-row p-2 border rounded-2xl my-2">
 							<div className="flex flex-col">
 								<span>
 									<b className="text-sm">Mã đơn hàng:</b>
-									{item.idOrder}
+									{item.id}
 								</span>
 								<span>
 									<b className="text-sm">Khách hàng:</b>
-									{item.customer}
+									{item.userData?.fullname}
 								</span>
 								<span>
 									<b className="text-sm">Số điện thoại:</b>
-									{item.phoneNumber}
+									{item.phoneContact}
 								</span>
 								<span>
-									<b className="text-sm">Địa chỉ:</b>
-									{item.address}
+									<b className="text-sm">Địa chỉ nhận hàng:</b>
+									{item.addressReceive}
 								</span>
 								<span>
 									<b className="text-sm">Phương thức thanh toán:</b>
-									{item.methodPayment}
+									{convertMethodPayment(item.methodPayment)}
 								</span>
 								<span>
 									<b className="text-sm">Thời gian đặt hàng:</b>
-									{item.time}
+									{formatDay.TDMY(item.timeOrder)}
 								</span>
 							</div>
 							<div className="flex flex-col">
-								{item.items.map((detail) => (
+								{item.orderItemData?.map((detail) => (
 									<span>
-										{detail.name}
+										{detail.itemData?.name}
 										{': '}
 										{detail.quantity}
 										{' x '}
-										{detail.price}
+										<NumberFormat value={detail.price} disabled thousandSeparator className="bg-white" />
 									</span>
 								))}
 							</div>
@@ -236,9 +271,31 @@ function Order() {
 								<span>
 									Tổng tiền thanh toán:
 									{' '}
-									{item.items.reduce((total, itemA) => total + itemA.price * itemA.quantity, 0)}
+									<NumberFormat
+										value={item.orderItemData?.reduce(
+											(total, itemA) => total + itemA.price * itemA.quantity,
+											0,
+										)}
+										disabled
+										thousandSeparator
+										className="bg-white"
+									/>
+
 								</span>
-								<span>{item.statePayment ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
+								<span className="flex flex-row flex-row-wrap items-center">
+									{item.isPayment ? (
+										<>
+											Đã thanh toán
+											{' '}
+											<AiFillCheckCircle color="green" />
+										</>
+									) : (
+										<>
+											Chưa thanh toán
+											<AiFillCloseCircle color="red" />
+										</>
+									)}
+								</span>
 							</div>
 						</div>
 					))

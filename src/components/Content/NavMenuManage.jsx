@@ -10,7 +10,7 @@ function NavMenuManage() {
 		buyer: [
 			{
 				title: 'Đơn hàng',
-				link: 'orders/watting',
+				link: 'orders',
 				check: false,
 			},
 			{

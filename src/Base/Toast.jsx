@@ -25,6 +25,7 @@ function Toast({ ...props }) {
 						id: props.id,
 					},
 				});
+				if (props.setIdToast) props.setIdToast(null);
 				navigate(location.pathname, { replace: true });
 			},
 		});

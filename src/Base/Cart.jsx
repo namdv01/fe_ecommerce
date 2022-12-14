@@ -3,15 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import NumberFormat from 'react-number-format';
+import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import notImage from '../assets/image/notImage.png';
 import { API_PUBLIC } from '../services/constants';
+import notItemInCart from '../assets/image/notItemInCart.png';
 
 function Cart() {
 	const [cart, setCart] = useState([]);
 	const [cookies, setCookie] = useCookies();
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [listCheck, setListCheck] = useState(false);
+	const navigate = useNavigate();
 	const getNewPrice = (itemInCart) => {
 		if (itemInCart.itemData.promotionItemData.length !== 0) {
 			return 0.01 * itemInCart.itemData.price
@@ -70,10 +73,6 @@ function Cart() {
 			return result;
 		};
 		getCart();
-		console.log(cookies);
-		// const JSOnObj = JSON.parse(JSON.stringify())
-		// eslint-disable-next-line max-len
-		// console.log(JSON.parse(decodeURIComponent('%5B%7B%22itemId%22%3A4%2C%22quantity%22%3A5%7D%2C%7B%22itemId%22%3A5%2C%22quantity%22%3A2%7D%5D')));
 	}, []);
 
 	useEffect(() => {
@@ -90,6 +89,10 @@ function Cart() {
 		}));
 		setCookie('cart', cookieCart);
 	}, [cart]);
+
+	const navigateToHome = () => {
+		navigate('/');
+	};
 
 	return (
 		<div>
@@ -149,28 +152,43 @@ function Cart() {
 					</div>
 				))
 			}
-			<div className="flex flex-row justify-around">
-				<div>
-					<input
-						type="checkbox"
-						className="scale-150 mr-3"
-						name=""
-						id=""
-						value={listCheck}
-						onChange={(e) => {
-							changeCheckAll(e);
-						}}
-					/>
-					<span>Tất cả</span>
-				</div>
-				<div>
-					<span>
-						Tổng tiền:
-						<NumberFormat value={totalPrice} disabled thousandSeparator className="outline-none text-center p-2" />
-					</span>
-					<input type="button" value="Đặt hàng" className="ml-3 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 border" />
-				</div>
-			</div>
+			{
+				cart.length > 0
+					? (
+						<div className="flex flex-row justify-around">
+							<div>
+								<input
+									type="checkbox"
+									className="scale-150 mr-3"
+									name=""
+									id=""
+									value={listCheck}
+									onChange={(e) => {
+										changeCheckAll(e);
+									}}
+								/>
+								<span>Tất cả</span>
+							</div>
+							<div>
+								<span>
+									Tổng tiền:
+									<NumberFormat value={totalPrice} disabled thousandSeparator className="outline-none text-center p-2" />
+								</span>
+								<input type="button" value="Đặt hàng" className="ml-3 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 border" />
+							</div>
+						</div>
+					)
+					: (
+						<div className="flex flex-row items-center justify-center" style={{ height: 'calc(100vh - 64px)' }}>
+							<div className="text-center">
+								Chưa có sản phẩm nào trong giỏ
+								<br />
+								<span aria-hidden className="hover:cursor-pointer hover:text-[#fe8c1a]" onClick={navigateToHome}>Mua sắm ngay</span>
+								<img src={notItemInCart} className="mx-auto w-32 h-32" alt="" />
+							</div>
+						</div>
+					)
+			}
 		</div>
 	);
 }
