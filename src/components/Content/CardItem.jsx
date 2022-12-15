@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { AiFillStar } from 'react-icons/ai';
+import NumberFormat from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import notImage from '../../assets/image/notImage.png';
 
@@ -33,13 +34,15 @@ function CardItem({ ...props }) {
 			</p>
 			<div className="flex flex-row text-[16px]">
 				<span className="flex flex-row justify-center">
-					4.8
+					5
 					<AiFillStar color="orange" size={24} className="pl-[4px]" />
 				</span>
 				<span>|</span>
 				<span>Đã bán 76</span>
 			</div>
-			<p>{props.item.price}</p>
+			<p>
+				<NumberFormat value={props.item.price} thousandSeparator />
+			</p>
 		</div>
 	);
 }

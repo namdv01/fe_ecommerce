@@ -30,7 +30,7 @@ function ImagesFullScreen({ ...props }) {
 		setResponsive({ ...responsive, ...newResponsive });
 	}, []);
 	return (
-		<div className="flex items-center justify-center z-50 fixed top-0 left-0 right-0 bottom-0 bg-black">
+		<div className="flex items-center justify-center z-50 fixed top-0 left-0 right-0 bottom-0 bg-[#ada7a7]">
 			<AiOutlineClose
 				className="absolute right-[36px] top-[36px] hover:cursor-pointer"
 				size={36}
@@ -42,8 +42,8 @@ function ImagesFullScreen({ ...props }) {
 			{
 				props.images
 					? (
-						<Carousel responsive={responsive} showDots className="w-[70%] max-w-[600px] min-w-[400px] bg-[#ffffffe8] text-[red]">
-							{props.images.map((image) => <img src={image} className="py-10 h-full mx-auto" key={image} alt="" />)}
+						<Carousel responsive={responsive} showDots className="w-[60%] max-w-[600px] min-w-[360px] bg-[#ffffffe8] text-[red]">
+							{props.images.map((image) => <img src={image} className="py-8 h-full mx-auto" key={image} alt="" />)}
 						</Carousel>
 					)
 					: <> </>

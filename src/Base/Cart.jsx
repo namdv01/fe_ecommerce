@@ -8,12 +8,14 @@ import api from '../config/api';
 import notImage from '../assets/image/notImage.png';
 import { API_PUBLIC } from '../services/constants';
 import notItemInCart from '../assets/image/notItemInCart.png';
+import Buy from '../Forms/Buy';
 
 function Cart() {
 	const [cart, setCart] = useState([]);
 	const [cookies, setCookie] = useCookies();
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [listCheck, setListCheck] = useState(false);
+	const [isBuy, setBuy] = useState(false);
 	const navigate = useNavigate();
 	const getNewPrice = (itemInCart) => {
 		if (itemInCart.itemData.promotionItemData.length !== 0) {
@@ -34,6 +36,12 @@ function Cart() {
 			}
 		});
 		setTotalPrice(newPrice);
+		// eslint-disable-next-line consistent-return
+		cart.forEach((item) => {
+			if (item.isCheck !== cart[0].isCheck) return false;
+		});
+		setListCheck(true);
+		console.log(123);
 	};
 
 	const changeNumber = (item, number, type = 'button') => {
@@ -77,17 +85,19 @@ function Cart() {
 
 	useEffect(() => {
 		let newPrice = 0;
-		cart.forEach((item) => {
-			if (item.isCheck) {
-				newPrice += (getNewPrice(item) || item.itemData.price) * item.quantity;
-			}
-		});
-		setTotalPrice(newPrice);
-		const cookieCart = cart.map((i) => ({
-			itemId: i.itemId,
-			quantity: i.quantity,
-		}));
-		setCookie('cart', cookieCart);
+		if (cart.length !== 0) {
+			cart.forEach((item) => {
+				if (item.isCheck) {
+					newPrice += (getNewPrice(item) || item.itemData.price) * item.quantity;
+				}
+			});
+			setTotalPrice(newPrice);
+			const cookieCart = cart.map((i) => ({
+				itemId: i.itemId,
+				quantity: i.quantity,
+			}));
+			setCookie('cart', cookieCart, { path: '/' });
+		}
 	}, [cart]);
 
 	const navigateToHome = () => {
@@ -155,7 +165,7 @@ function Cart() {
 			{
 				cart.length > 0
 					? (
-						<div className="flex flex-row justify-around">
+						<div className="flex flex-row justify-around items-center">
 							<div>
 								<input
 									type="checkbox"
@@ -174,7 +184,14 @@ function Cart() {
 									Tổng tiền:
 									<NumberFormat value={totalPrice} disabled thousandSeparator className="outline-none text-center p-2" />
 								</span>
-								<input type="button" value="Đặt hàng" className="ml-3 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 border" />
+								<input
+									type="button"
+									value="Đặt hàng"
+									onClick={() => {
+										setBuy(true);
+									}}
+									className="ml-3 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 border"
+								/>
 							</div>
 						</div>
 					)
@@ -188,6 +205,9 @@ function Cart() {
 							</div>
 						</div>
 					)
+			}
+			{
+				isBuy ? <Buy items={cart} setBuy={setBuy} type="cart" /> : <> </>
 			}
 		</div>
 	);

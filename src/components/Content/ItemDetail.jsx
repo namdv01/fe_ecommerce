@@ -10,6 +10,7 @@ import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../../services/constant
 import notImage from '../../assets/image/notImage.png';
 import Toast from '../../Base/Toast';
 import ImagesFullScreen from '../../Base/ImagesFullScreen';
+import Buy from '../../Forms/Buy';
 
 function ItemDetail() {
 	const { id_item: idItem } = useParams();
@@ -20,6 +21,7 @@ function ItemDetail() {
 	const [item, setItem] = useState({
 		itemImageData: [],
 	});
+	const [isBuy, setBuy] = useState(false);
 	const [openImages, setOpenImages] = useState(false);
 	const turnOpenImages = (value) => {
 		setOpenImages(value);
@@ -40,6 +42,19 @@ function ItemDetail() {
 				payload: {
 					id,
 					content: 'Cần đăng nhập',
+					type: 'warning',
+				},
+			});
+			return false;
+		}
+		if (number <= 0) {
+			const id = Date.now();
+			setIdToast(id);
+			dispatch({
+				type: SHOW_TOAST,
+				payload: {
+					id,
+					content: 'Cần nhập số lượng sản phẩm',
 					type: 'warning',
 				},
 			});
@@ -111,13 +126,43 @@ function ItemDetail() {
 		};
 		setResponsive({ ...responsive, ...newResponsive });
 	}, []);
+	const orderItem = () => {
+		if (!authReducer.isAuth) {
+			const id = Date.now();
+			setIdToast(id);
+			dispatch({
+				type: SHOW_TOAST,
+				payload: {
+					id,
+					content: 'Cần đăng nhập',
+					type: 'warning',
+				},
+			});
+			return false;
+		}
+		if (number <= 0) {
+			const id = Date.now();
+			setIdToast(id);
+			dispatch({
+				type: SHOW_TOAST,
+				payload: {
+					id,
+					content: 'Cần nhập số lượng sản phẩm',
+					type: 'warning',
+				},
+			});
+			return false;
+		}
+		setBuy(true);
+		return true;
+	};
 	return (
 		<div>
 			<div className="flex flex-row flex-wrap">
 				{
 					item.itemImageData.length > 0
 						? (
-							<Carousel responsive={responsive} showDots infinite className="w-[600px] z-10">
+							<Carousel responsive={responsive} showDots infinite className="max-w-[480px] pb-6 w-[90%] mx-auto z-10">
 								{
 								// eslint-disable-next-line no-unused-vars
 									item.itemImageData.map((image) => (
@@ -172,7 +217,7 @@ function ItemDetail() {
 					</div>
 					<div>
 						<button type="button" className="py-3 border-black mx-2 px-1 border bg-slate-300 text-sm w-[175px] hover:bg-slate-200" onClick={addItemToCart}>Thêm sản phẩm vào giỏ</button>
-						<button type="button" className="py-3 border-black mx-2 px-1 border bg-slate-300 text-sm w-[175px] hover:bg-slate-200">Mua hàng</button>
+						<button type="button" className="py-3 border-black mx-2 px-1 border bg-slate-300 text-sm w-[175px] hover:bg-slate-200" onClick={orderItem}>Mua hàng</button>
 					</div>
 				</div>
 			</div>
@@ -185,6 +230,9 @@ function ItemDetail() {
 				/>
 			)
 				: <> </>}
+			{
+				isBuy ? <Buy item={{ ...item, number }} setBuy={setBuy} type="landing" /> : <> </>
+			}
 		</div>
 	);
 }

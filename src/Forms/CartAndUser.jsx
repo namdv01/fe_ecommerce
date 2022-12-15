@@ -59,7 +59,7 @@ function CartAndUser() {
 									onClick={() => {
 										navigatePage('login');
 									}}
-									className="px-2  mr-4 h-[40px] leading-[40px] border outline-none hover:cursor-pointer hover:bg-slate-400"
+									className="px-2 bg-[white] mr-4 h-[40px] leading-[40px] border outline-none hover:cursor-pointer hover:bg-slate-400"
 								/>
 
 								<input
@@ -68,7 +68,7 @@ function CartAndUser() {
 									}}
 									type="button"
 									value="Đăng ký"
-									className="px-2 h-[40px] leading-[40px] border outline-none hover:cursor-pointer hover:bg-slate-400"
+									className="px-2 bg-[white] h-[40px] leading-[40px] border outline-none hover:cursor-pointer hover:bg-slate-400"
 								/>
 							</>
 						) : (

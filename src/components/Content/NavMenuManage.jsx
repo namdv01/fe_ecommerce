@@ -99,20 +99,23 @@ function NavMenuManage() {
 		navigate(`${link}`);
 	};
 	return (
-		<div className="w-[20%] h-[70vh] mt-16  min-w-[200px] max-w-[250px] bg-[#da8f2e] p-3 mr-4	">
-			{list[authReducer.isAuth ? authReducer.profile.position : 'buyer'].map((item) => (
-				<div
-					className={`py-3 text-lg pl-4 color-white text-bold hover:cursor-pointer hover:text-white ${item.check ? 'text-white' : ''}`}
-					onClick={() => {
-						changePage(item.link);
-					}}
-					aria-hidden
-					key={item.link}
-				>
-					{item.title}
-				</div>
-			))}
-		</div>
+		<>
+			<div className="w-[20%] h-[70vh] mt-16  min-w-[200px] max-w-[250px] bg-[#da8f2e] p-3 mr-4	">
+				{list[authReducer.isAuth ? authReducer.profile.position : 'buyer'].map((item) => (
+					<div
+						className={`py-3 text-lg pl-4 color-white text-bold hover:cursor-pointer hover:text-white ${item.check ? 'text-white' : ''}`}
+						onClick={() => {
+							changePage(item.link);
+						}}
+						aria-hidden
+						key={item.link}
+					>
+						{item.title}
+					</div>
+				))}
+			</div>
+			<div />
+		</>
 	);
 }
 

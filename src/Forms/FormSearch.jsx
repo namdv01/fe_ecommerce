@@ -64,7 +64,7 @@ function FormSearch() {
 	return (
 		<div
 			ref={myRef}
-			className="border border-[black] pr-2 flex flex-row items-center my-3 relative"
+			className="border flex-1 max-w-[700px] justify-between border-[black] pr-2 flex flex-row items-center my-3 relative bg-white"
 		>
 			<input
 				type="text"

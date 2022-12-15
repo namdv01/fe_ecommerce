@@ -34,7 +34,7 @@ function Toast({ ...props }) {
 		if (toastItem) showToast();
 	}, [toastItem]);
 	return (
-		<ToastContainer />
+		<ToastContainer className="z-[10001]" />
 	);
 }
 

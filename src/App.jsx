@@ -29,6 +29,7 @@ import Client from './components/Admin/Client';
 import ReportAdmin from './components/Admin/Report';
 import { LOADING_FALSE, LOADING_TRUE } from './services/constants';
 import authMiddleware from './store/middleware/auth';
+import Payment from './components/User/Payment';
 
 function App() {
 	const authReducer = useSelector((state) => state.authReducer);
@@ -69,6 +70,8 @@ function App() {
 							<Route path="notify" element={<Notify />} />
 							<Route path="report" element={<Report />} />
 						</Route>
+						<Route path="payment" element={<Payment />} />
+						<Route path="payment/:statePayment" element={<Payment />} />
 						<Route path="admin" element={<Admin />}>
 							{/* <div>1</div> */}
 							<Route index element={<Client />} />

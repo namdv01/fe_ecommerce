@@ -34,7 +34,7 @@ function DropdownUser() {
 		navigate(value);
 	};
 	useEffect(() => {
-		if (authReducer) {
+		if (authReducer.isAuth) {
 			setPosition(authReducer.profile.position);
 		}
 	}, []);
@@ -59,7 +59,6 @@ function DropdownUser() {
 						aria-hidden
 					>
 						{getLinkPosition(authReducer.profile.position)}
-
 					</span>
 				) : <> </>}
 				<span className=" block h-10 leading-10 cursor-pointer hover:bg-slate-200 text-center" onClick={logout} aria-hidden>Đăng xuất</span>
