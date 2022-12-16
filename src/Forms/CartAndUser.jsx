@@ -76,7 +76,7 @@ function CartAndUser() {
 						)
 				}
 			</div>
-			{idToast ? <Toast id={idToast} /> : <> </>}
+			{idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>}
 		</div>
 	);
 }

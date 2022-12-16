@@ -1,8 +1,14 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Rating from 'react-rating';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import ImagesFullScreen from '../../Base/ImagesFullScreen';
+import api from '../../config/api';
+import { API_PUBLIC, LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import notImage from '../../assets/image/notImage.png';
+import formatDay from '../../services/formatDay';
 
 function CommentList({ ...props }) {
 	/*
@@ -80,18 +86,35 @@ function CommentList({ ...props }) {
 	const turnOpenImages = (value) => {
 		setOpenImages(value);
 	};
+	const dispatch = useDispatch();
+	const params = useParams();
+	useEffect(() => {
+		const callComments = async () => {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			const result = await api.get(`seller/list_comment/${params.idShop}`);
+			if (result.errCode === 0) {
+				setComments([...result.payload]);
+			}
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		};
+		callComments();
+	}, []);
 	return (
 		<div className="flex flex-col w-full">
 			{comments.map((comment) => (
 				<div className="flex-col flex py-1 px-2 shadow-sm mb-3 bg-[#f7f3f3ec] rounded-lg" key={Math.random()}>
 					<div className="flex flex-row justify-between">
 						<div className="flex flex-row items-center">
-							<img src={comment.avatar} className="rounded-[50%] border mr-2 w-7 h-7" alt="" />
-							<span className="text-[#555353] select-none">{comment.customer}</span>
+							<img src={comment.userData?.imageAvatar ? API_PUBLIC + comment.userData.imageAvatar : notImage} className="rounded-[50%] border mr-2 w-7 h-7" alt="" />
+							<span className="text-[#555353] select-none">{comment.userData?.fullname}</span>
 						</div>
 						<div className="flex flex-row flex-wrap">
 							<span>Sản phẩm: </span>
-							<span className="text-[grey]">{comment.nameItem}</span>
+							<span className="text-[grey]">{comment.itemData?.name}</span>
 						</div>
 					</div>
 
@@ -104,14 +127,14 @@ function CommentList({ ...props }) {
 								emptySymbol={<AiOutlineStar color="#ffdb4d" />}
 							/>
 						</span>
-						<span className="text-sm text-[grey]">{comment.time}</span>
+						<span className="text-sm text-[grey]">{formatDay.TDMY(comment.updatedAt)}</span>
 					</div>
 					<div>
 						<textarea disabled="readonly" className="bg-white border rounded-sm outline-none w-full min-h-[100px] max-h-[200px] select-none" value={comment.text} />
 					</div>
 					<div className="flex flex-row w-full">
-						{comment.images.length > 3
-							? comment.images.map((image, index) => {
+						{comment.commentImageData?.length > 3
+							? comment.commentImageData.map((image, index) => {
 								if (index === 0 || index === 1) {
 									return (
 										<div
@@ -122,7 +145,7 @@ function CommentList({ ...props }) {
 											}}
 											aria-hidden
 										>
-											<img src={image} alt="" />
+											<img src={API_PUBLIC + image.image} alt="" />
 										</div>
 									);
 								}
@@ -136,19 +159,19 @@ function CommentList({ ...props }) {
 											}}
 											aria-hidden
 										>
-											<img src={image} key={Date.now()} alt="" />
+											<img src={API_PUBLIC + image.image} key={Date.now()} alt="" />
 											<div className="text-center leading-[100%] bg-[#000000] opacity-20 absolute top-0 bottom-0 left-0 right-0" />
 											<div className="absolute top-[50%] opacity-100 translate-y-[-50%] left-[50%] translate-x-[-50%] text-white text-[24px]">
 												+
 												{' '}
-												{comment.images.length - 2}
+												{comment.commentImageData.length - 2}
 											</div>
 										</div>
 									);
 								}
 								return <> </>;
 							})
-							: comment.images.map((image) => (
+							: comment.commentImageData?.map((image) => (
 								<div
 									key={Math.random() + 1}
 									className="hover:cursor-pointer w-24 h-24"
@@ -157,11 +180,16 @@ function CommentList({ ...props }) {
 									}}
 									aria-hidden
 								>
-									<img src={image} key={Date.now()} alt="" />
+									<img src={API_PUBLIC + image.image} key={Date.now()} alt="" />
 								</div>
 							)) }
 					</div>
-					{openImages ? <ImagesFullScreen images={comment.images} turnOpenImages={turnOpenImages} />
+					{openImages ? (
+						<ImagesFullScreen
+							images={comment.commentImageData.map((i) => API_PUBLIC + i.image)}
+							turnOpenImages={turnOpenImages}
+						/>
+					)
 						: <> </>}
 				</div>
 			))}

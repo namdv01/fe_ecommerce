@@ -1,7 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 // import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import Toast from '../Base/Toast';
+import api from '../config/api';
+import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../services/constants';
 // import api from '../config/api';
 // import { LOADING_FALSE, LOADING_TRUE } from '../services/constants';
 
@@ -14,7 +18,8 @@ function CreateProduct({ ...props }) {
 		quantity: 0,
 		images: [],
 		description: '',
-		type: 1,
+		itemTypeId: 1,
+		shopId: params.idShop,
 	});
 	const changeForm = (e, key) => {
 		form[key] = e.target.value;
@@ -30,25 +35,28 @@ function CreateProduct({ ...props }) {
 		form.images = [];
 		setForm({ ...form });
 	};
-
+	const dispatch = useDispatch();
+	const [idToast, setIdToast] = useState(null);
 	const submitForm = async () => {
-		console.log(params);
-		console.log(form);
-		// dispatch({
-		// 	type: LOADING_TRUE,
-		// });
-		// const result = await api.post('user/add_item', form);
-		// if (result.errCode === 0) {
-		// 	dispatch({
-		// 		type: LOADING_TRUE,
-		// 	});
-		// 	dispatch()
-		// }
-		// console.log(result);
-		// dispatch({
-		// 	type: LOADING_FALSE
-		// })
-		// const result = await api.post(`shop/create_`)
+		dispatch({
+			type: LOADING_TRUE,
+		});
+		const result = await api.post('seller/add_item', form);
+		const id = Math.random();
+		if (result.errCode === 0) {
+			dispatch({
+				type: SHOW_TOAST,
+				payload: {
+					id,
+					content: result.mes,
+					type: result.errCode === 0 ? 'success' : 'error',
+				},
+			});
+		}
+		dispatch({
+			type: LOADING_FALSE,
+		});
+		props.setCloseCreateProduct(false);
 	};
 
 	useEffect(() => {
@@ -125,6 +133,7 @@ function CreateProduct({ ...props }) {
 				</div>
 				<div />
 			</div>
+			{idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>}
 		</>
 	);
 }

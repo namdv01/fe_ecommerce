@@ -73,18 +73,6 @@ function CreateShop({ ...props }) {
 						/>
 					</div>
 					<div className="flex flex-row flex-wrap mb-3">
-						<label htmlFor="logo" className="w-[120px]">Logo:</label>
-						<input
-							type="file"
-							id="logo"
-							value={form.logo}
-							className="hidden"
-							onChange={(e) => {
-								changeForm(e, 'logo');
-							}}
-						/>
-					</div>
-					<div className="flex flex-row flex-wrap mb-3">
 						<label htmlFor="desc" className="w-[120px]">Miêu tả:</label>
 						<textarea
 							value={form.description}

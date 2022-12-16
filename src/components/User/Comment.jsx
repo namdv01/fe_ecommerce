@@ -4,8 +4,9 @@ import Rating from 'react-rating';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import ImagesFullScreen from '../../Base/ImagesFullScreen';
-import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import { API_PUBLIC, LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
 import api from '../../config/api';
+import formatDay from '../../services/formatDay';
 
 function Comment() {
 	const [comments, setComments] = useState([
@@ -114,6 +115,9 @@ function Comment() {
 			});
 			const result = await api.get('user/list_comments');
 			console.log(result);
+			if (result.errCode === 0) {
+				setComments([...result.payload]);
+			}
 			dispatch({
 				type: LOADING_FALSE,
 			});
@@ -121,24 +125,25 @@ function Comment() {
 		callComments();
 	}, []);
 	return (
-		<div className="flex flex-row flex-wrap mt-14">
+		<div className="flex flex-col flex-wrap mt-14">
 			{comments.map((comment) => (
 				<>
-					<div className="flex flex-col p-2 border rounded-xl m-2 w-[320px]" key={comment.time}>
+					<div className="flex flex-col p-2 border rounded-xl m-2 w-[320px]" key={comment.createdAt}>
 						<span>
 							{comment.text}
 						</span>
+						<span>{formatDay.TDMY(comment.createdAt)}</span>
 						<Rating
 							initialRating={comment.star}
 							readonly
 							fullSymbol={<AiFillStar color="#ffdb4d" />}
 							emptySymbol={<AiOutlineStar color="#ffdb4d" />}
 						/>
-						<span>{comment.nameItem}</span>
-						<span>{comment.shop}</span>
+						<span>{comment.itemData?.name}</span>
+						<span>{comment.itemData?.shopData?.shopName}</span>
 						<div className="flex flex-row justify-between w-full">
-							{comment.images.length > 3
-								? comment.images.map((image, index) => {
+							{comment.commentImageData?.length > 3
+								? comment.commentImageData?.map((image, index) => {
 									if (index === 0 || index === 1) {
 										return (
 											<div
@@ -148,7 +153,7 @@ function Comment() {
 												}}
 												aria-hidden
 											>
-												<img src={image} key={Date.now()} alt="" />
+												<img src={API_PUBLIC + image.image} key={Date.now()} alt="" />
 											</div>
 										);
 									}
@@ -173,7 +178,7 @@ function Comment() {
 									}
 									return <> </>;
 								})
-								: comment.images.map((image) => (
+								: comment.commentImageData?.map((image) => (
 									<div
 										className="hover:cursor-pointer w-24 h-24"
 										onClick={(e) => {
@@ -181,12 +186,17 @@ function Comment() {
 										}}
 										aria-hidden
 									>
-										<img src={image} key={Date.now()} alt="" />
+										<img src={API_PUBLIC + image.image} key={Date.now()} alt="" />
 									</div>
 								)) }
 						</div>
 					</div>
-					{openImages ? <ImagesFullScreen images={comment.images} turnOpenImages={turnOpenImages} />
+					{openImages ? (
+						<ImagesFullScreen
+							images={comment.commentImageData.map((image) => API_PUBLIC + image.image)}
+							turnOpenImages={turnOpenImages}
+						/>
+					)
 						: <> </>}
 				</>
 			))}

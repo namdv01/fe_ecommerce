@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import Toast from '../Base/Toast';
+import api from '../config/api';
 import checkError from '../services/checkError';
+import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../services/constants';
 import buyer from '../services/schemas/buyer';
 
 function ForgetPassword() {
@@ -14,7 +18,8 @@ function ForgetPassword() {
 	const onChange = (e) => {
 		setForm({ ...form, email: e.target.value });
 	};
-
+	const dispatch = useDispatch();
+	const [idToast, setIdToast] = useState(null);
 	const submit = async () => {
 		const errorMes = checkError(buyer.forgetPassword, {
 			email: form.email,
@@ -29,6 +34,24 @@ function ForgetPassword() {
 			});
 			return false;
 		}
+		dispatch({
+			type: LOADING_TRUE,
+		});
+		const result = await api.post('user/forget_password', { email: form.email });
+		const id = Math.random();
+		console.log(result);
+		setIdToast(id);
+		dispatch({
+			type: SHOW_TOAST,
+			payload: {
+				type: result.errCode === 0 ? 'success' : 'error',
+				content: result.mes,
+				id,
+			},
+		});
+		dispatch({
+			type: LOADING_FALSE,
+		});
 		return true;
 	};
 
@@ -64,6 +87,7 @@ function ForgetPassword() {
 					</button>
 				</div>
 			</div>
+			{idToast ? <Toast setIdToast={setIdToast} id={idToast} /> : <> </>}
 		</div>
 	);
 }

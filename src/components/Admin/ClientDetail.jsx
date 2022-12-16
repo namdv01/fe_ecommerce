@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useRef, useState, useEffect } from 'react';
+import { API_PUBLIC } from '../../services/constants';
+import notImage from '../../assets/image/notImage.png';
 
 function ClientDetail({ ...props }) {
 	/**
@@ -39,14 +41,14 @@ function ClientDetail({ ...props }) {
 			<div className="bg-white p-2 fixed z-[21] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" ref={myRef}>
 				<div className="flex flex-row">
 					<div>
-						<img src={form.avatar} className="w-16 h-16" alt="" />
+						<img src={form.imageAvatar ? API_PUBLIC + form.imageAvatar : notImage} className="w-16 h-16" alt="" />
 						<input type="file" name="" className="hidden" id="inputAvatar" />
 						<label htmlFor="inputAvatar">Thay đổi ảnh</label>
 					</div>
 					<div>
 						<div>
 							<label htmlFor="name">Tên:</label>
-							<input type="text" name="" id="name" className="outline-none border px-2 py-1" value={form.name} />
+							<input type="text" name="" id="name" className="outline-none border px-2 py-1" value={form.fullname} />
 						</div>
 						<div>
 							<label htmlFor="position">Vị trí:</label>

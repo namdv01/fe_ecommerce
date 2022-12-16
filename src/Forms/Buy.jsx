@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState, useRef } from 'react';
+import { useCookies } from 'react-cookie';
 import NumberFormat from 'react-number-format';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import notImage from '../assets/image/notImage.png';
-import { API_PUBLIC } from '../services/constants';
+import { API_PUBLIC, LOADING_TRUE } from '../services/constants';
 
 function Buy({ ...props }) {
 	/**
@@ -20,16 +21,7 @@ function Buy({ ...props }) {
    *  type: cart || home
    * }
    */
-	// const convertMethodPayment = (value) => {
-	// 	switch (value) {
-	// 		case 'afterReceive':
-	// 			return 'Thanh toán khi nhận hàng';
-	// 		case 'paypal':
-	// 			return 'Thanh toán qua paypal';
-	// 		default:
-	// 			return value;
-	// 	}
-	// };
+	const dispatch = useDispatch();
 	const [form, setForm] = useState({
 		fullname: '',
 		address: '',
@@ -37,6 +29,8 @@ function Buy({ ...props }) {
 		methodPayment: 'afterReceive',
 	});
 	const authReducer = useSelector((state) => state.authReducer);
+	// eslint-disable-next-line no-unused-vars
+	const [cookie, setCookie] = useCookies();
 	useEffect(() => {
 		const { profile } = authReducer;
 		form.addressReceive = profile.address;
@@ -197,11 +191,33 @@ function Buy({ ...props }) {
 					</>
 				)}
 				<div className="flex flex-row justify-between">
-					<a href="http://localhost:6789/user/payment">
+					<a href={`http://localhost:6789/user/payment?fullname=${form.fullname}&address=${form.addressReceive}&phoneContact=${form.phoneContact}`}>
 						<input
 							type="button"
 							value="Đặt hàng"
 							className="px-2 py-1 border outline-none hover:cursor-pointer bg-[#4adfea] hover:bg-[#4ae5f0]"
+							onClick={() => {
+								const order = [];
+								dispatch({
+									type: LOADING_TRUE,
+								});
+								if (props.item) {
+									order.push({
+										itemId: props.item.id,
+										quantity: props.item.number,
+										name: props.item.name,
+									});
+								} else if (props.items) {
+									props.items.forEach((i) => {
+										order.push({
+											itemId: i.itemId,
+											name: i.name,
+											quantity: i.quantity,
+										});
+									});
+								}
+								setCookie('order', order, { path: '/' });
+							}}
 						/>
 					</a>
 					<input

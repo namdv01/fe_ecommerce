@@ -2,8 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BsFillPencilFill, BsFolder2Open } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
 import Pagination from '../../Base/Pagination';
 import ClientDetail from './ClientDetail';
+import api from '../../config/api';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import formatDay from '../../services/formatDay';
 
 function Client() {
 	const [users, setUsers] = useState([
@@ -67,11 +71,33 @@ function Client() {
 				return value;
 		}
 	};
+	const dispatch = useDispatch();
 	useEffect(() => {
 		if (!location.pathname.includes('customer')) {
 			navigate('/admin/customer');
 		}
 	}, [location.pathname]);
+	useEffect(() => {
+		const callListUser = async () => {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			const result = await api.get('admin/list_users');
+			if (result.errCode === 0) {
+				setUsers([...result.payload.users]);
+				setPage({
+					...page,
+					cur: result.payload.page,
+					total: result.payload.totalPage,
+					size: result.payload.size,
+				});
+			}
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		};
+		callListUser();
+	}, []);
 	return (
 		<>
 			<table className="border border-r-1 border-b-1 w-full">
@@ -90,9 +116,9 @@ function Client() {
 						users.map((user, index) => (
 							<tr key={Math.random()}>
 								<td className="border border-l-1 border-t-1 px-2 py-1 text-center">{index + 1}</td>
-								<td className="border border-l-1 border-t-1 px-2 py-1">{user.name}</td>
+								<td className="border border-l-1 border-t-1 px-2 py-1">{user.fullname}</td>
 								<td className="border border-l-1 border-t-1 px-2 py-1">{convertPosition(user.position)}</td>
-								<td className="border border-l-1 border-t-1 px-2 py-1 text-center">{user.lastLogin}</td>
+								<td className="border border-l-1 border-t-1 px-2 py-1 text-center">{formatDay.TDMY(user.tokenData?.updatedAt)}</td>
 								<td className="border border-l-1 border-t-1 px-2 py-1 text-center">
 									<BsFolder2Open
 										className="mx-auto hover:cursor-pointer hover:text-[blue]"

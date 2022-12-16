@@ -10,7 +10,7 @@ function NavMenuManage() {
 		buyer: [
 			{
 				title: 'Đơn hàng',
-				link: 'orders',
+				link: 'orders/watting',
 				check: false,
 			},
 			{
@@ -83,7 +83,10 @@ function NavMenuManage() {
 	useEffect(() => {
 		const listLocation = location.pathname.split('/');
 		list[listLocation[1]] = list[listLocation[1]].map((item) => {
-			if (item.link === listLocation[listLocation.length - 1]) return { ...item, check: true };
+			if (item.link.includes(listLocation[listLocation.length - 1])) {
+				return { ...item, check: true };
+			}
+
 			return item;
 		});
 		setList({ ...list });

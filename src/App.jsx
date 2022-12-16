@@ -30,6 +30,7 @@ import ReportAdmin from './components/Admin/Report';
 import { LOADING_FALSE, LOADING_TRUE } from './services/constants';
 import authMiddleware from './store/middleware/auth';
 import Payment from './components/User/Payment';
+import ResetPassword from './Forms/ResetPassword';
 
 function App() {
 	const authReducer = useSelector((state) => state.authReducer);
@@ -92,6 +93,7 @@ function App() {
 					</Route>
 					<Route path="login" element={<Login />} />
 					<Route path="forget_password" element={<ForgetPassword />} />
+					<Route path="confirm_password" element={<ResetPassword />} />
 					<Route path="register" element={<Register />} />
 				</Route>
 				<Route path="/not_found" element={<NotFound />} />

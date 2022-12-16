@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import api from '../../config/api';
+import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import formatDay from '../../services/formatDay';
 import OrderDetail from './OrderDetail';
 
 function Order() {
@@ -152,14 +156,45 @@ function Order() {
 	}, [stateOrder]);
 	useEffect(() => {
 		if (states.length > 0 && stateOrder && states.findIndex((st) => st.check === true) < 0) {
-			console.log(stateOrder);
-			console.log(states);
 			// navigate('/not_found');
 		}
 	}, [states]);
 
 	const chooseDetail = (order) => {
 		setDetail(order);
+	};
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		const callListOrder = async () => {
+			dispatch({
+				type: LOADING_TRUE,
+			});
+			const result = await api.get('admin/list_order');
+			if (result.errCode === 0) {
+				setOrder(result.payload.order);
+			}
+			dispatch({
+				type: LOADING_FALSE,
+			});
+		};
+		callListOrder();
+	}, []);
+	const getListShop = (value) => {
+		if (!value) return null;
+		const arrShop = [];
+		value.forEach((i) => {
+			arrShop.push(i.itemData.shopData.shopName);
+		});
+		arrShop.sort();
+		if (arrShop.length >= 2) {
+			for (let i = 0; i < arrShop.length - 1; i += 1) {
+				if (arrShop[i] === arrShop[i + 1]) {
+					arrShop.shift();
+				}
+			}
+		}
+		return arrShop.toString();
 	};
 	return (
 		<>
@@ -184,9 +219,9 @@ function Order() {
 							<tr key={Math.random()}>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{index + 1}</td>
 								<td className="border-b border-r border-black py-2 px-3 text-center">{order.id}</td>
-								<td className="border-b border-r border-black py-2 px-3">{order.customer}</td>
-								<td className="border-b border-r border-black py-2 px-3">{order.shop}</td>
-								<td className="border-b border-r border-black py-2 px-3">{order.timeOrder}</td>
+								<td className="border-b border-r border-black py-2 px-3">{order.userData?.fullname}</td>
+								<td className="border-b border-r border-black py-2 px-3">{getListShop(order.orderItemData)}</td>
+								<td className="border-b border-r border-black py-2 px-3">{formatDay.TDMY(order.timeOrder)}</td>
 								<td className="border-b border-r border-black py-2 px-3">
 									<input
 										type="button"
@@ -208,9 +243,7 @@ function Order() {
 			</div>
 			{detail ? (
 				<OrderDetail
-					id={detail.id}
-					items={detail.detail}
-					status={convertStatus(detail.status)}
+					detail={detail}
 					setDetail={setDetail}
 				/>
 			) : <> </>}

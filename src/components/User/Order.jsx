@@ -170,10 +170,22 @@ function Order() {
 	}, [stateOrder]);
 
 	useEffect(() => {
+		console.log(123);
+		console.log(states);
 		console.log(stateOrder);
 		if (states.length > 0 && stateOrder && states.findIndex((st) => st.check === true) < 0) {
 			console.log(stateOrder);
 			console.log(states);
+			const newS = states.map((s) => {
+				if (s.state === stateOrder) {
+					return {
+						...s,
+						check: true,
+					};
+				}
+				return s;
+			});
+			setState([...newS]);
 			// navigate('/not_found');
 		}
 	}, [states]);
@@ -194,7 +206,8 @@ function Order() {
 			dispatch({
 				type: LOADING_TRUE,
 			});
-			const result = await api.get('user/list_orders', { params: { status: stateOrder } });
+
+			const result = await api.get('user/list_orders', { params: { status: stateOrder === 'watting' ? 'none' : stateOrder } });
 			if (result.errCode === 0) {
 				setItems([...result.payload.orders]);
 			}
@@ -202,7 +215,7 @@ function Order() {
 				type: LOADING_FALSE,
 			});
 		};
-		callOrder();
+		if (stateOrder) callOrder();
 	}, [stateOrder]);
 
 	return (
