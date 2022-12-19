@@ -39,6 +39,7 @@ function Subnavbar({ ...props }) {
 			return false;
 		}
 		navigate('cart');
+		props.setSubnav(false);
 		return true;
 	};
 	useEffect(() => {
@@ -79,7 +80,12 @@ function Subnavbar({ ...props }) {
 		<>
 			<div className="fixed top-0 bottom-0 left-0 right-0 z-[9999] hover:cursor-pointer bg-[#393636dc] opacity-70" />
 			<div className="bg-[#40caf1] fixed left-0 top-0 bottom-0 px-4 w-[50%] min-w-[280px] z-[10000]" ref={myRef}>
-				<div>
+				<div
+					onClick={() => {
+						navigatePage('');
+					}}
+					aria-hidden
+				>
 					<img src={logoSSV} alt="" className="w-[30%]" />
 				</div>
 				{authReducer.isAuth ? (
@@ -102,7 +108,7 @@ function Subnavbar({ ...props }) {
 									}}
 									aria-hidden
 								>
-									{getLinkPosition(authReducer.profile.position)}
+									{getLinkPosition()}
 								</span>
 							) : <> </>}
 						</div>

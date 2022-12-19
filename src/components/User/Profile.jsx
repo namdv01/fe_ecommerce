@@ -98,7 +98,7 @@ function Profile() {
 			{
 				authReducer.isAuth
 					? (
-						<div className="flex flex-row shadow-lg p-1">
+						<div className="flex flex-row shadow-lg m-2 p-1 flex-wrap border rounded-lg">
 							<div className="mr-2">
 								<img src={getAvatar()} className="w-16 h-16 border" alt="" />
 								<label htmlFor="fileAvatar">Đổi avatar</label>

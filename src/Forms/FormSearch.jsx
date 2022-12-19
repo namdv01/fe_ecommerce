@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { CHANGE_SEARCH_PRODUCT } from '../services/constants';
+import { CHANGE_SEARCH_PRODUCT, LOADING_FALSE, LOADING_TRUE } from '../services/constants';
 import systemMiddleware from '../store/middleware/system';
 import DropdownSearch from './DropdownSearch';
 
@@ -41,12 +41,19 @@ function FormSearch() {
 		});
 	};
 	const search = async () => {
+		setDropdown(false);
 		const value = {
 			name: nameProduct,
 		};
 		if (minCostProduct) value.min = minCostProduct;
 		if (maxCostProduct) value.max = maxCostProduct;
+		dispatch({
+			type: LOADING_TRUE,
+		});
 		await dispatch(systemMiddleware.searchProduct(value));
+		dispatch({
+			type: LOADING_FALSE,
+		});
 		navigate('/');
 	};
 
@@ -77,7 +84,7 @@ function FormSearch() {
 				}}
 				value={nameProduct}
 				onChange={changeInputSearch}
-				className="border border-none outline-none mx-2 px-1 h-[38px]"
+				className="border border-none outline-none mx-2 px-1 h-[38px] w-full"
 				placeholder="Nhập thông tin tìm kiếm ..."
 			/>
 			<i

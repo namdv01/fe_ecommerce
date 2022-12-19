@@ -22,7 +22,7 @@ function Admin() {
 		}
 	}, [loading]);
 	return (
-		<div className="flex flex-row mx-[5%]">
+		<div className="flex flex-row mx-[1%]">
 			<NavMenuManage />
 			<div className="mt-16 w-full">
 				<Outlet />

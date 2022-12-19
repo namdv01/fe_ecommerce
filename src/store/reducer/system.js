@@ -91,18 +91,22 @@ const systemReducer = (state = initState, action) => {
 		}
 
 		case SEARCH_PRODUCT: {
-			// if (action.payload.type === 'loadMore') {
-			// 	return {
-			// 		...state,
-			// 		pageProduct: action.payload.page,
-			// 		products: [...state.products, ...action.payload.products],
-			// 	};
-			// }
+			console.log(action.payload);
+			if (action.payload.type === 'loadMore') {
+				// console.log(state.products);
+				// console.log(action.payload.products);
+				return {
+					...state,
+					pageProduct: action.payload.page,
+					totalPage: action.payload.totalPage,
+					products: [...state.products, ...action.payload.products],
+				};
+			}
 			return {
 				...state,
 				pageProduct: action.payload.page,
 				totalPage: action.payload.totalPage,
-				products: [...state.products, ...action.payload.products],
+				products: [...action.payload.products],
 			};
 		}
 

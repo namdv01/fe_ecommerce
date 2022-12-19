@@ -29,7 +29,7 @@ function Buyer() {
 		}
 	}, [loading]);
 	return (
-		<div className="flex flex-row mx-[5%]">
+		<div className="flex flex-row mx-[1%]">
 			<NavMenuManage />
 			<Outlet />
 		</div>

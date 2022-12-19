@@ -30,7 +30,7 @@ function CardItem({ ...props }) {
 				className="w-full p-[1px] h-[200px]"
 			/>
 			<p className="truncate leading-[18px] h-[45px]">
-				{props.item.description}
+				{props.item.name}
 			</p>
 			<div className="flex flex-row text-[16px]">
 				<span className="flex flex-row justify-center">

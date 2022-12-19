@@ -83,7 +83,7 @@ function Origin() {
 						style={{
 							background: shop.color,
 						}}
-						className="border rounded-lg p-4 text-xl inline-block m-4 text-white hover:cursor-pointer"
+						className="border rounded-lg p-4 text-xl inline-block m-4 text-white hover:cursor-pointer min-h-[120px]"
 						onClick={() => {
 							changePage(shop.id);
 						}}

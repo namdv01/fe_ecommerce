@@ -3,7 +3,7 @@ import NavMenuManage from '../Content/NavMenuManage';
 
 function ManageOrder() {
 	return (
-		<div className="flex flex-row mx-[5%]">
+		<div className="flex flex-row mx-[1%]">
 			<NavMenuManage />
 		</div>
 	);

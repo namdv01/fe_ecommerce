@@ -33,7 +33,7 @@ function DropdownSearch({ ...props }) {
 	}, [props]);
 
 	return (
-		<div className="bg-white absolute top-full z-10 left-0 right-0 shadow-md" ref={myRef}>
+		<div className="bg-white absolute top-full z-[100] left-0 right-0 shadow-md" ref={myRef}>
 			{history.map((item) => (
 				<p
 					className="px-2 hover:bg-slate-300"

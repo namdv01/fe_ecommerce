@@ -4,7 +4,11 @@ import { useCookies } from 'react-cookie';
 import NumberFormat from 'react-number-format';
 import { useDispatch, useSelector } from 'react-redux';
 import notImage from '../assets/image/notImage.png';
-import { API_PUBLIC, LOADING_TRUE } from '../services/constants';
+import Toast from '../Base/Toast';
+import api from '../config/api';
+import {
+	API_PUBLIC, LOADING_FALSE, LOADING_TRUE, SHOW_TOAST,
+} from '../services/constants';
 
 function Buy({ ...props }) {
 	/**
@@ -22,6 +26,7 @@ function Buy({ ...props }) {
    * }
    */
 	const dispatch = useDispatch();
+	const [idToast, setIdToast] = useState(null);
 	const [form, setForm] = useState({
 		fullname: '',
 		address: '',
@@ -39,6 +44,7 @@ function Buy({ ...props }) {
 		setForm({
 			...form,
 		});
+		console.log(props);
 	}, []);
 
 	const changeValue = (e, key) => {
@@ -62,27 +68,27 @@ function Buy({ ...props }) {
 	return (
 		<>
 			<div className="fixed top-0 bottom-0 right-0 left-0 z-20 bg-[#00000027] opacity-80" />
-			<div className="bg-white p-2 shadow-lg fixed top-[50%] left-[50%] z-[21] translate-x-[-50%] translate-y-[-50%]" ref={myRef}>
+			<div className="bg-white p-2 shadow-lg min-w-[320px] fixed top-[50%] left-[50%] z-[21] translate-x-[-50%] translate-y-[-50%]" ref={myRef}>
 				<div className="flex flex-col">
 					<h4>Thông tin nhận hàng:</h4>
-					<div className="flex flex-row flex-wrap items-center">
-						<label htmlFor="fullname" className="w-[50%]">Người nhận:</label>
+					<div className="flex flex-row flex-wrap items-center mb-1">
+						<label htmlFor="fullname" className="w-1/3 mr-2">Người nhận:</label>
 						<input
 							type="text"
 							id="fullname"
-							className="w-[50%] outline-none border p-1"
+							className="flex-1 outline-none border p-1 min-w-[250px]"
 							value={form.fullname}
 							onChange={(e) => {
 								changeValue(e, 'fullname');
 							}}
 						/>
 					</div>
-					<div className="flex flex-row flex-wrap items-center">
-						<label htmlFor="address" className="w-[100px]">Địa chỉ:</label>
+					<div className="flex flex-row flex-wrap items-center mb-1">
+						<label htmlFor="address" className="w-1/3 mr-2">Địa chỉ:</label>
 						<textarea
 							name=""
 							id="address"
-							className="w-[300px] max-h-[120px] outline-none border p-1"
+							className="flex-1 max-h-[120px] outline-none border p-1 min-w-[250px]"
 							value={form.addressReceive}
 							onChange={(e) => {
 								changeValue(e, 'addressReceive');
@@ -90,13 +96,13 @@ function Buy({ ...props }) {
 						/>
 					</div>
 					<div className="flex flex-row flex-wrap my-1">
-						<label htmlFor="phoneNumber" className="w-[50%]">SĐT:</label>
+						<label htmlFor="phoneNumber" className="w-1/3 mr-2">SĐT:</label>
 						<input
 							type="text"
 							pattern="[0-9.]+"
 							name=""
 							id="phoneNumber"
-							className="w-[50%] border p-1 outline-none"
+							className="flex-1 border p-1 outline-none min-w-[250px]"
 							value={form.phoneContact}
 							onChange={(e) => {
 								changeValue(e, 'phoneContact');
@@ -131,9 +137,7 @@ function Buy({ ...props }) {
 									</span>
 									<span>
 										<NumberFormat value={item.itemData.price} thousandSeparator className="w-[120px]" />
-										{' '}
-										x
-										{' '}
+										{' x '}
 										{item.quantity}
 									</span>
 								</div>
@@ -191,35 +195,88 @@ function Buy({ ...props }) {
 					</>
 				)}
 				<div className="flex flex-row justify-between">
-					<a href={`http://localhost:6789/user/payment?fullname=${form.fullname}&address=${form.addressReceive}&phoneContact=${form.phoneContact}`}>
-						<input
-							type="button"
-							value="Đặt hàng"
-							className="px-2 py-1 border outline-none hover:cursor-pointer bg-[#4adfea] hover:bg-[#4ae5f0]"
-							onClick={() => {
-								const order = [];
-								dispatch({
-									type: LOADING_TRUE,
-								});
-								if (props.item) {
-									order.push({
-										itemId: props.item.id,
-										quantity: props.item.number,
-										name: props.item.name,
-									});
-								} else if (props.items) {
-									props.items.forEach((i) => {
-										order.push({
-											itemId: i.itemId,
-											name: i.name,
-											quantity: i.quantity,
+					{
+						form.methodPayment === 'paypal' ? (
+							<a href={`http://localhost:6789/user/payment?fullname=${form.fullname}&address=${form.addressReceive}&phoneContact=${form.phoneContact}`}>
+								<input
+									type="button"
+									value="Đặt hàng"
+									className="px-2 py-1 border outline-none hover:cursor-pointer bg-[#4adfea] hover:bg-[#4ae5f0]"
+									onClick={() => {
+										const order = [];
+										dispatch({
+											type: LOADING_TRUE,
 										});
+										if (props.item) {
+											order.push({
+												itemId: props.item.id,
+												quantity: props.item.number,
+												name: props.item.name,
+											});
+										} else if (props.items) {
+											props.items.forEach((i) => {
+												order.push({
+													itemId: i.itemId,
+													name: i.name,
+													quantity: i.quantity,
+												});
+											});
+										}
+										setCookie('order', order, { path: '/' });
+									}}
+								/>
+							</a>
+						) : (
+							<input
+								type="button"
+								value="Đặt hàng"
+								className="px-2 py-1 border outline-none hover:cursor-pointer bg-[#4adfea] hover:bg-[#4ae5f0]"
+								onClick={async () => {
+									const order = [];
+									dispatch({
+										type: LOADING_TRUE,
 									});
-								}
-								setCookie('order', order, { path: '/' });
-							}}
-						/>
-					</a>
+									if (props.item) {
+										order.push({
+											itemId: props.item.id,
+											quantity: props.item.number,
+											name: props.item.name,
+										});
+									} else if (props.items) {
+										props.items.forEach((i) => {
+											order.push({
+												itemId: i.itemId,
+												name: i.name,
+												quantity: i.quantity,
+											});
+										});
+									}
+									const result = await api.post('user/order_item', {
+										items: order,
+										isPayment: false,
+										methodPayment: 'afterReveice',
+										addressReceive: form.addressReceive,
+										phoneContact: form.phoneContact,
+									});
+									console.log(result.payload);
+									const id = Math.random();
+									setIdToast(id);
+									dispatch({
+										type: SHOW_TOAST,
+										payload: {
+											id,
+											content: result.mes,
+											type: result.errCode === 0 ? 'success' : 'error',
+										},
+									});
+									dispatch({
+										type: LOADING_FALSE,
+									});
+									// setCookie('order', order, { path: '/' });
+								}}
+							/>
+						)
+					}
 					<input
 						type="button"
 						value="Đóng"
@@ -230,6 +287,9 @@ function Buy({ ...props }) {
 					/>
 				</div>
 			</div>
+			{
+				idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>
+			}
 		</>
 	);
 }

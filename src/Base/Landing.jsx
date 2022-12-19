@@ -49,11 +49,11 @@ function Landing() {
 	useEffect(() => {
 		const show = async () => {
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight
-			&& pageProduct <= totalPage) {
+			&& pageProduct < totalPage) {
 				dispatch({
 					type: LOADING_TRUE,
 				});
-				await dispatch(systemMiddleware.searchProduct({ page: pageProduct + 1 }));
+				await dispatch(systemMiddleware.searchProduct({ page: pageProduct + 1 }, { type: 'loadMore' }));
 				dispatch({
 					type: LOADING_FALSE,
 				});
@@ -63,7 +63,7 @@ function Landing() {
 		return () => {
 			document.removeEventListener('scroll', show, true);
 		};
-	}, [pageProduct]);
+	}, [pageProduct, totalPage]);
 
 	return (
 		<div
@@ -72,11 +72,11 @@ function Landing() {
 			<SlideShow />
 			{location.state?.id ? <Toast id={location.state?.id} /> : <> </>}
 			<div
-				className="flex flex-col"
+				className="flex flex-row flex-wrap justify-center"
 				ref={listRef}
 			>
 				{products.length === 0 ? <div>Không có sản phẩm nào</div> : products.map((item) => (
-					<div key={Math.random() + item.id}>
+					<div key={Math.random() + item.id} className="w-1/4 min-w-[320px] max-w-[400px] my-2 mx-auto flex justify-center">
 						<CardItem item={item} />
 					</div>
 				))}

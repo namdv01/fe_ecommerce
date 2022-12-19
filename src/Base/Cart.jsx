@@ -4,13 +4,18 @@ import { useCookies } from 'react-cookie';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import NumberFormat from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import api from '../config/api';
 import notImage from '../assets/image/notImage.png';
-import { API_PUBLIC } from '../services/constants';
+import { API_PUBLIC, SHOW_TOAST } from '../services/constants';
 import notItemInCart from '../assets/image/notItemInCart.png';
 import Buy from '../Forms/Buy';
+import Confirm from '../Forms/Confirm';
+import authMiddleware from '../store/middleware/auth';
+import Toast from './Toast';
 
 function Cart() {
+	const dispatch = useDispatch();
 	const [cart, setCart] = useState([]);
 	const [cookies, setCookie] = useCookies();
 	const [totalPrice, setTotalPrice] = useState(0);
@@ -24,6 +29,11 @@ function Cart() {
 		}
 		return null;
 	};
+	const [confirmRemove, setConfirmRemove] = useState({
+		title: '',
+		check: false,
+		index: -1,
+	});
 
 	const changeCheck = (e, id) => {
 		const index = cart.findIndex((c) => c.id === id);
@@ -41,23 +51,27 @@ function Cart() {
 			if (item.isCheck !== cart[0].isCheck) return false;
 		});
 		setListCheck(true);
-		console.log(123);
 	};
 
 	const changeNumber = (item, number, type = 'button') => {
 		const index = cart.findIndex((c) => c.id === item.id);
-		if (type === 'button') {
-			cart[index].quantity += number;
-			if (cart[index].quantity <= 0) {
-				console.log('xóa');
-			}
+		const newItem = cart[index].quantity + number;
+		if (newItem <= 0) {
+			setConfirmRemove({
+				...confirmRemove, index, check: true, title: `Xóa ${item.itemData.name} khỏi giỏ`,
+			});
 		} else {
-			cart[index].quantity = number;
-			if (cart[index].quantity <= 0) {
-				console.log('xóa');
-			}
+			cart[index].quantity += number;
+			setCart([...cart]);
 		}
-		setCart([...cart]);
+	};
+
+	const confirmRemoveItemIndex = async () => {
+		if (confirmRemove.index >= 0) {
+			cart.splice(confirmRemove.index, 1);
+			setCart([...cart]);
+			await dispatch(authMiddleware.getProfile());
+		}
 	};
 
 	const changeCheckAll = (e) => {
@@ -103,6 +117,7 @@ function Cart() {
 	const navigateToHome = () => {
 		navigate('/');
 	};
+	const [idToast, setIdToast] = useState(null);
 
 	return (
 		<div>
@@ -165,13 +180,11 @@ function Cart() {
 			{
 				cart.length > 0
 					? (
-						<div className="flex flex-row justify-around items-center">
-							<div>
+						<div className="flex flex-row justify-around">
+							<div className="min-w-[80px] text-center leading-10 mt-2">
 								<input
 									type="checkbox"
 									className="scale-150 mr-3"
-									name=""
-									id=""
 									value={listCheck}
 									onChange={(e) => {
 										changeCheckAll(e);
@@ -179,8 +192,8 @@ function Cart() {
 								/>
 								<span>Tất cả</span>
 							</div>
-							<div>
-								<span>
+							<div className="flex items-center flex-row flex-wrap justify-end">
+								<span className="mr-1 mt-2">
 									Tổng tiền:
 									<NumberFormat value={totalPrice} disabled thousandSeparator className="outline-none text-center p-2" />
 								</span>
@@ -188,9 +201,22 @@ function Cart() {
 									type="button"
 									value="Đặt hàng"
 									onClick={() => {
-										setBuy(true);
+										if (cart.findIndex((item) => item.isCheck) !== -1) {
+											setBuy(true);
+										} else {
+											const id = Math.random();
+											setIdToast(id);
+											dispatch({
+												type: SHOW_TOAST,
+												payload: {
+													id,
+													type: 'warning',
+													content: 'Cần chọn ít nhất một sản phẩm',
+												},
+											});
+										}
 									}}
-									className="ml-3 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 border"
+									className="ml-3 mt-2 mr-2 hover:cursor-pointer bg-[#ffcc00] hover:bg-[#ffe680] p-2 outline-none"
 								/>
 							</div>
 						</div>
@@ -207,7 +233,29 @@ function Cart() {
 					)
 			}
 			{
-				isBuy ? <Buy items={cart} setBuy={setBuy} type="cart" /> : <> </>
+				isBuy ? (
+					<Buy
+						items={cart.map((itemInCart) => ({
+							...itemInCart,
+							itemData: {
+								...itemInCart.itemData,
+								price: getNewPrice(itemInCart) || itemInCart.itemData.price,
+							},
+						}))}
+						setBuy={setBuy}
+						type="cart"
+					/>
+				) : <> </>
+			}
+			{ confirmRemove.check ? (
+				<Confirm
+					title={confirmRemove.title}
+					cancelHandle={setConfirmRemove}
+					confirmHandle={confirmRemoveItemIndex}
+				/>
+			) : <> </>}
+			{
+				idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>
 			}
 		</div>
 	);

@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../../services/constants';
 import OrderDetail from './OrderDetail';
 import formatDay from '../../services/formatDay';
+import ChangeStatusOrder from '../../Forms/ChangeStatusOrder';
+import Toast from '../../Base/Toast';
 
 function Order() {
 	const params = useParams();
@@ -136,6 +138,35 @@ function Order() {
 				return value;
 		}
 	};
+	const [idToast, setIdToast] = useState(null);
+	const [idChange, setIdChange] = useState({
+		id: null,
+		oriStatus: '',
+		tranStatus: '',
+	});
+	const updateOrder = async (status) => {
+		dispatch({
+			type: LOADING_TRUE,
+		});
+		const result = await api.post('seller/update_order', {
+			idOrder: idChange.id,
+			deliver: status,
+		});
+		const id = Math.random();
+		setIdToast(id);
+		dispatch({
+			type: SHOW_TOAST,
+			payload: {
+				id,
+				content: result.mes,
+				type: result.errCode === 0 ? 'success' : 'error',
+			},
+		});
+		await callOrders();
+		dispatch({
+			type: LOADING_FALSE,
+		});
+	};
 	return (
 		<>
 			<div className="w-full">
@@ -167,12 +198,24 @@ function Order() {
 										onClick={() => {
 											chooseDetail(order);
 										}}
-										className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400"
+										className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400 hover:cursor-pointer"
 									/>
 								</td>
 								<td className="border-b border-r border-black py-2 px-3">{convertStateOrder(order.deliver)}</td>
 								<td className="border-b border-r border-black py-2 px-3">
-									<input type="button" value="Thay đổi" className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400" />
+									<input
+										type="button"
+										value="Thay đổi"
+										onClick={() => {
+											setIdChange({
+												...idChange,
+												id: order.id,
+												ori: order.deliver,
+												tran: convertStateOrder(order.deliver),
+											});
+										}}
+										className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400 hover:cursor-pointer"
+									/>
 								</td>
 							</tr>
 						))}
@@ -185,6 +228,18 @@ function Order() {
 					setDetail={setDetail}
 				/>
 			) : <> </>}
+			{
+				idChange.id ? (
+					<ChangeStatusOrder
+						idChange={idChange}
+						setIdChange={setIdChange}
+						confirmStatus={updateOrder}
+					/>
+				) : <> </>
+			}
+			{
+				idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>
+			}
 		</>
 	);
 }

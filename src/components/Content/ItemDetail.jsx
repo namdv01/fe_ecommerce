@@ -11,6 +11,7 @@ import notImage from '../../assets/image/notImage.png';
 import Toast from '../../Base/Toast';
 import ImagesFullScreen from '../../Base/ImagesFullScreen';
 import Buy from '../../Forms/Buy';
+import authMiddleware from '../../store/middleware/auth';
 
 function ItemDetail() {
 	const { id_item: idItem } = useParams();
@@ -82,6 +83,7 @@ function ItemDetail() {
 					type: 'success',
 				},
 			});
+			await dispatch(authMiddleware.getProfile());
 		} else {
 			const id = Date.now();
 			setIdToast(id);
@@ -158,7 +160,7 @@ function ItemDetail() {
 	};
 	return (
 		<div>
-			<div className="flex flex-row flex-wrap">
+			<div className="flex flex-row flex-wrap items-center my-2">
 				{
 					item.itemImageData.length > 0
 						? (

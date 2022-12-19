@@ -219,8 +219,8 @@ function Order() {
 	}, [stateOrder]);
 
 	return (
-		<div className="flex flex-col w-[70%] mx-[5%]">
-			<div className="relative flex-row flex justify-between mb-12">
+		<div className="flex flex-col w-[90%] mx-[auto]">
+			<div className="relative flex-row flex justify-between sm:mt-0 mt-4 sm:mb-12 mb-4">
 				<div className="absolute h-1 bg-[#5fdf5f] w-full top-[50%] z-[1] translate-y-1/2" />
 				{
 					states.map((item) => (
@@ -231,9 +231,9 @@ function Order() {
 							}}
 							aria-hidden
 						>
-							<div className={`w-12 h-12 leading-[48px] text-center rounded-[50%] border bg-white z-10 relative hover:bg-[#e4e440] ${item.check ? 'bg-[#e4e440]' : ''}`}>
+							<div title={item.title} className={`w-12 h-12 leading-[48px] text-center rounded-[50%] border bg-white z-10 relative hover:bg-[#e4e440] ${item.check ? 'bg-[#e4e440]' : ''}`}>
 								{item.id}
-								<span className="absolute top-full right-[50%] w-[120px] translate-x-1/2">{item.title}</span>
+								<span className="absolute top-full right-[50%] w-[120px] translate-x-1/2 sm:block hidden">{item.title}</span>
 							</div>
 						</div>
 					))
@@ -242,7 +242,7 @@ function Order() {
 			<div>
 				{
 					items.map((item) => (
-						<div className="flex flex-row p-2 border rounded-2xl my-2">
+						<div className="flex md:flex-row flex-col p-2 border rounded-2xl my-2">
 							<div className="flex flex-col">
 								<span>
 									<b className="text-sm">Mã đơn hàng:</b>

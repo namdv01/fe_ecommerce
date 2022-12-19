@@ -139,9 +139,9 @@ function Comment() {
 							fullSymbol={<AiFillStar color="#ffdb4d" />}
 							emptySymbol={<AiOutlineStar color="#ffdb4d" />}
 						/>
-						<span>{comment.itemData?.name}</span>
-						<span>{comment.itemData?.shopData?.shopName}</span>
-						<div className="flex flex-row justify-between w-full">
+						<span className="truncate" title={comment.itemData?.name}>{comment.itemData?.name}</span>
+						<span className="truncate" title={comment.itemData?.shopData?.shopName}>{comment.itemData?.shopData?.shopName}</span>
+						<div className="flex flex-row w-full">
 							{comment.commentImageData?.length > 3
 								? comment.commentImageData?.map((image, index) => {
 									if (index === 0 || index === 1) {

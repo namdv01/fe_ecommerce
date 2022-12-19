@@ -15,6 +15,7 @@ const authMiddleware = {
 		};
 	},
 	getProfile() {
+		console.log('call profile');
 		return async (dispatch, getState) => {
 			const result = await api.get('user/profile');
 			if (result.errCode === 0) {

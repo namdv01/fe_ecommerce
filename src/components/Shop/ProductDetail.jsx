@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Toast from '../../Base/Toast';
 import api from '../../config/api';
-import { LOADING_FALSE, LOADING_TRUE } from '../../services/constants';
+import { LOADING_FALSE, LOADING_TRUE, SHOW_TOAST } from '../../services/constants';
 
 function ProductDetail({ ...props }) {
 	const [form, setForm] = useState({
@@ -42,15 +43,32 @@ function ProductDetail({ ...props }) {
 		form[key] = e.target.value;
 		setForm({ ...form });
 	};
-	const submitForm = () => {
+	const [idToast, setIdToast] = useState(null);
+	const submitForm = async () => {
 		dispatch({
 			type: LOADING_TRUE,
 		});
-		setTimeout(() => {
-			dispatch({
-				type: LOADING_FALSE,
-			});
-		}, 2000);
+		const result = await api.post(`seller/update_item/${props.product.id}`, {
+			name: form.name,
+			price: form.price,
+			quantity: form.quantity,
+			description: form.description,
+		});
+		console.log(result);
+		const id = Math.random();
+		setIdToast(id);
+		dispatch({
+			type: SHOW_TOAST,
+			payload: {
+				id,
+				content: result.mes,
+				type: result.errCode === 0 ? 'success' : 'error',
+			},
+		});
+		dispatch({
+			type: LOADING_FALSE,
+		});
+		props.setProduct(null);
 	};
 	const clearForm = () => {
 		form.name = '';
@@ -133,6 +151,9 @@ function ProductDetail({ ...props }) {
 				</div>
 				{/* <div className=" text-black">{props.product.name}</div> */}
 			</div>
+			{
+				idToast ? <Toast id={idToast} setIdToast={setIdToast} /> : <> </>
+			}
 		</>
 	);
 }

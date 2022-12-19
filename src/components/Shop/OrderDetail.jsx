@@ -31,7 +31,7 @@ function OrderDetail({ ...props }) {
 	};
 	return (
 		<>
-			<div className="bg-white p-2 fixed z-[21] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" ref={myRef}>
+			<div className="bg-white p-2 fixed z-[21] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex flex-col" ref={myRef}>
 				<span>
 					Mã đơn hàng:
 					{' '}
@@ -42,9 +42,8 @@ function OrderDetail({ ...props }) {
 						<div key={item.itemData.name}>
 							{item.itemData.name}
 							:
-							{item.quantity }
-							{' '}
-							x
+							{item.quantity}
+							{' x'}
 							<NumberFormat value={item.price} disabled thousandSeparator />
 						</div>
 					))

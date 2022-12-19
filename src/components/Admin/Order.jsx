@@ -103,7 +103,7 @@ function Order() {
 		switch (status) {
 			case 'done':
 				return 'Hoàn thành';
-			case 'watting':
+			case 'none':
 				return 'Chờ xác nhận';
 			case 'delivering':
 				return 'Đang giao';
@@ -232,7 +232,7 @@ function Order() {
 										className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400"
 									/>
 								</td>
-								<td className="border-b border-r border-black py-2 px-3">{convertStatus(order.status)}</td>
+								<td className="border-b border-r border-black py-2 px-3">{convertStatus(order.deliver)}</td>
 								<td className="border-b border-r border-black py-2 px-3">
 									<input type="button" value="Thay đổi" className="py-1 px-2 outline-none border bg-blue-300 hover:bg-blue-400" />
 								</td>

@@ -13,8 +13,9 @@ const systemMiddleware = {
 					type: SEARCH_PRODUCT,
 					payload: {
 						products: result.payload.products,
-						type,
+						...type,
 						page: result.payload.page,
+						totalPage: result.payload.totalPage,
 					},
 				});
 			}
